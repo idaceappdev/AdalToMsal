@@ -239,11 +239,11 @@ Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overr
     
     https://login.microsoftonline.com/<Tenant_ID>/oauth2/authorize?client_id=<client_id>&redirect_uri=https%3a%2f%2flocalhost%3a44377%2fsignin-oidc&resource=https%3a%2f%2fgraph.microsoft.com&response_type=id_token
   
-1. Go to Azure portal and observe the sign -in logs and click on the additional details tab and observe the ADAL information(under non-interactive logs)
+2. Go to Azure portal and observe the sign -in logs and click on the additional details tab and observe the ADAL information(under non-interactive logs)
     
     ![image](https://user-images.githubusercontent.com/62542910/206378418-83948cbe-bf09-4a3a-a266-bfc51c4aa4b4.png)
 
-1. If you have setup the workbook solution to track the ADAL apps as explained [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps) then you will see the entry as below  
+3. If you have setup the workbook solution to track the ADAL apps as explained [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps) then you will see the entry as below  
     
     ![image](https://user-images.githubusercontent.com/62542910/206378709-e60e6704-aeb2-49df-bb7d-460112370264.png)
 

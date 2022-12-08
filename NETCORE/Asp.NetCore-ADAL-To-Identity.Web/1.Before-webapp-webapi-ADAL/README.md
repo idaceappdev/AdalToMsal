@@ -231,6 +231,23 @@ options.ResponseType = "id_token code";
 
 Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overriding the response type (default *id_token*), the `OnTokenValidated` event is fired instead of `OnAuthorizationCodeReceived`. The line above requests **both** *id_token* and *code*, so that `OnTokenValidated` is called first. This ensures that `context.Principal` has a non-null value representing the signed-in user when `OnAuthorizeationCodeReceived` is called.
 
+### Verifying this app is using ADAL
+
+1. Notice the URL during the sign-in process which will be using the V1 endpoint.
+
+  ![image](https://user-images.githubusercontent.com/62542910/206369207-7759357e-fea9-45e0-8a36-b994ee56b757.png)
+    
+    https://login.microsoftonline.com/<Tenant_ID>/oauth2/authorize?client_id=<client_id>&redirect_uri=https%3a%2f%2flocalhost%3a44377%2fsignin-oidc&resource=https%3a%2f%2fgraph.microsoft.com&response_type=id_token
+  
+1. Go to Azure portal and observe the sign -in logs and click on the additional details tab and observe the ADAL information(under non-interactive logs)
+    
+    ![image](https://user-images.githubusercontent.com/62542910/206378418-83948cbe-bf09-4a3a-a266-bfc51c4aa4b4.png)
+
+1. If you have setup the workbook solution to track the ADAL apps as explained [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps) then you will see the entry as below  
+    
+    ![image](https://user-images.githubusercontent.com/62542910/206378709-e60e6704-aeb2-49df-bb7d-460112370264.png)
+
+
 ### How to change the app URL
 If you are using Visual Studio 2017
 1. Edit the TodoListService's properties (right click on `TodoListService.csproj`, and choose **Properties**)

@@ -90,12 +90,54 @@ This project had followed the insutruction from  https://learn.microsoft.com/en-
     ```
  - Use the below line of code just before adding authentication middleware. 
   
-  ```sh
-  app.UseRouting(); 
-  ```
-  After Authentication middleware, please add the authorization middleware too 
+     ```sh
+     app.UseRouting(); 
+     ```
+   After Authentication middleware, please add the authorization middleware too 
+  
+     ```sh
+     app.UseAuthorization(); 
+     ```
+- Compile the project and it should build without any errors.  
+
+## Changes needed on TodoListWebApp project.  
+
+- Right click on the project file and change the asp.net core target to .NET 6. 
+- Now there are certain manual changes that need to be made to run the project in .NET 6.  
+- Go to the startup class of the project and add below namespace  
   
   ```sh
-  app.UseAuthorization(); 
+  using Microsoft.Extensions.Hosting; 
+  ```
+  Replace **IHostingEnvironment** interface by **IWebHostEnvironment **
+- Replace the below line of code in the Startup.cs in the project  
+  
+  ```sh
+   app.UseMvc(routes => 
+           { 
+                routes.MapRoute( 
+                name: "default", 
+                    template: "{controller=Home}/{action=Index}/{id?}"); 
+
+            }); 
+  ```
+  By
+  
+  ```sh
+   app.UseMvc(routes => 
+           { 
+                routes.MapRoute( 
+                    name: "default", 
+                    template: "{controller=Home}/{action=Index}/{id?}"); 
+            }); 
+  ```
+- Use the below line of code just before adding authentication middleware. 
+  
+   ```sh
+   app.UseRouting(); 
+  ```
+  After Authentication middleware, please add the authorization middleware too 
+   ```sh
+   app.UseAuthorization();  
   ```
 - Compile the project and it should build without any errors.  

@@ -57,11 +57,12 @@ This project is built on top of the previous project.
    ```sh
   [RequiredScope( 
             AcceptedScope = new string[] { _todoListReadWriteScope } 
+            )]
    ```
 - Comment all the code from the below files  
   
-  **AzureAdAuthenticationBuilderExtensions.cs **
-  **AzureAdOptions.cs **
+   - AzureAdAuthenticationBuilderExtensions.cs
+   - AzureAdOptions.cs
 - Now the service API can validate the specific scope in the token.  
 
 ## Changes needed in TodoListWebApp project

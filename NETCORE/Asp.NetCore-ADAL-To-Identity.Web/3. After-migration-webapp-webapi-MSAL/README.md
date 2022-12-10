@@ -140,6 +140,35 @@ This project is built on top of the previous project.
   ```sh
   app.UseSession(); 
   ```
+  Add below line of code in the configureServices method. 
+  
+  ```sh
+   services.AddDistributedMemoryCache(); 
+            services.Configure<CookiePolicyOptions>(options => 
+            { 
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request. 
+                options.CheckConsentNeeded = context => true; 
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified; 
+                // Handling SameSite cookie according to https://docs.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-3.1 
+                options.HandleSameSiteCookieCompatibility(); 
+            }); 
+            services.AddOptions(); 
+   // The following lines of code adds the ability to authenticate users of this web app. 
+   // Refer to https://github.com/AzureAD/microsoft-identity-web/wiki/web-apps to learn more 
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration) 
+                    .EnableTokenAcquisitionToCallDownstreamApi( 
+                        Configuration.GetSection("TodoList:TodoListScopes").Get<string>().Split(" ", System.StringSplitOptions.RemoveEmptyEntries) 
+                     ) 
+                    .AddInMemoryTokenCaches(); 
+            services.AddControllersWithViews(options => 
+            { 
+                var policy = new AuthorizationPolicyBuilder() 
+                    .RequireAuthenticatedUser() 
+                    .Build(); 
+                options.Filters.Add(new AuthorizeFilter(policy)); 
+            }).AddMicrosoftIdentityUI(); 
+            services.AddRazorPages(); 
+  ```
   Add below line of json in the appsettings.json 
   
   ```sh
@@ -148,3 +177,4 @@ This project is built on top of the previous project.
     "TodoListBaseAddress": "https://localhost:44351" 
   }, 
   ```
+- Replace the content of TodoController with below line of code 

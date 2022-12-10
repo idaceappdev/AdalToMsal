@@ -249,3 +249,23 @@ This project is built on top of the previous project.
    ```sh
    using Microsoft.IdentityModel.Clients.ActiveDirectory; 
   ```
+- Specify the asp are path as MicrosoftIdentity under the views/shared folder in the file _LoginPartial,cshtml 
+   
+   Replace the line 
+   ```sh   
+   <li><a asp-area="" asp-controller="Account" asp-action="Signin">Sign in</a></li> 
+   ```
+   By 
+   ```sh   
+   <li><a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="Signin">Sign in</a></li> 
+   ```
+   Replace the line 
+   ```sh
+   <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li> 
+   ```
+   By 
+   ```sh
+   <li><a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a></li> 
+   ```
+ 
+ 

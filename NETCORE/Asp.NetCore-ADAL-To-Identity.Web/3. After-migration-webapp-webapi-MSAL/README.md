@@ -165,7 +165,7 @@ This project is built on top of the previous project.
          _httpClient = httpClient;
      }
   ```
-  - Declare the below method in the TodoController class
+- Declare the below method in the TodoController class
   
   ```sh
     private async Task PrepareAuthenticatedClient() 

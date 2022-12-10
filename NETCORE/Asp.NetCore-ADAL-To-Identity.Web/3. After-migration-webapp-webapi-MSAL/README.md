@@ -77,11 +77,10 @@ This project is built on top of the previous project.
     ```
  - Install the NUGET **Microsoft.Identity.Web.UI** & **Newtonsoft.Json**
  - Comment all the code from the below files  
-  
-  **AzureAdAuthenticationBuilderExtensions.cs**
-  **AzureAdOptions.cs**
-  **NaiveSessionCache.cs**
-  **AccountController.cs**
+  - AzureAdAuthenticationBuilderExtensions.cs
+  - AzureAdOptions.cs
+  - NaiveSessionCache.cs
+  - AccountController.cs
 - Comment all the line of code under configureservices in startup.cs  
  
    ```sh

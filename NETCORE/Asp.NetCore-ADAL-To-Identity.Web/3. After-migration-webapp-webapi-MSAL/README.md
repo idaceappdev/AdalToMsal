@@ -243,6 +243,8 @@ This project is built on top of the previous project.
   
   ```sh
   await PrepareAuthenticatedClient();
+      var jsonRequest = JsonConvert.SerializeObject(new { Title = item });
+      var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
   HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
   ```  
 - Remove the below line of code to get rid adal reference

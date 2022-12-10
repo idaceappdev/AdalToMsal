@@ -125,11 +125,12 @@ This project had followed the insutruction from  https://learn.microsoft.com/en-
   By
   
   ```sh
-   app.UseMvc(routes => 
-           { 
-                routes.MapRoute( 
-                    name: "default", 
-                    template: "{controller=Home}/{action=Index}/{id?}"); 
+   app.UseEndpoints(endpoints => 
+            { 
+                endpoints.MapControllerRoute( 
+                 name: "default", 
+                 pattern: "{controller=Home}/{action=Index}/{id?}"); 
+                 endpoints.MapRazorPages(); 
             }); 
   ```
 - Use the below line of code just before adding authentication middleware. 
@@ -141,4 +142,5 @@ This project had followed the insutruction from  https://learn.microsoft.com/en-
    ```sh
    app.UseAuthorization();  
   ```
+- You may have to install Nuget ** Microsoft.IdentityModel.Clients.ActiveDirectory** and **Microsoft.AspNetCore.Authentication.OpenIdConnect**
 - Compile the project and it should build without any errors.  

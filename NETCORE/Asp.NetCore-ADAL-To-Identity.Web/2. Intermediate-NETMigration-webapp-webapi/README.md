@@ -142,5 +142,7 @@ This project had followed the insutruction from  https://learn.microsoft.com/en-
    ```sh
    app.UseAuthorization();  
   ```
-- You may have to install Nuget ** Microsoft.IdentityModel.Clients.ActiveDirectory** and **Microsoft.AspNetCore.Authentication.OpenIdConnect**
+- You have to install below two Nuget 
+   - Microsoft.IdentityModel.Clients.ActiveDirectory 
+   - Microsoft.AspNetCore.Authentication.AzureAD.UI
 - Compile the project and it should build without any errors.  

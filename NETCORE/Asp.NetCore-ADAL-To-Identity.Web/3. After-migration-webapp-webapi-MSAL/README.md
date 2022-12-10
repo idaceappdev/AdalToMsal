@@ -206,7 +206,7 @@ This project is built on top of the previous project.
    ```sh
   AuthenticationResult result = null;
   ```
-- Replace the below line of code in the get and post method of index
+- Comment the below line of code in the get and post method of index
 
   ```sh 
    string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
@@ -221,12 +221,31 @@ This project is built on top of the previous project.
                     HttpClient client = new HttpClient();
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                    request.Content = content;
-                    HttpResponseMessage response = await client.SendAsync(request);
+                    request.Content = content;                  
   ```
-  By 
+- Replace the line of code in the get version of Index
+     
+     ```sh
+     HttpResponseMessage response = await client.SendAsync(request);
+     ```sh
+ By 
   
   ```sh
   await PrepareAuthenticatedClient();
+  HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
   ```
+- Replace the line of code in the Post version of Index
+     
+     ```sh
+     HttpResponseMessage response = await client.SendAsync(request);
+     ```sh
+ By 
   
+  ```sh
+  await PrepareAuthenticatedClient();
+  HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
+  ```  
+- Remove the below line of code to get rid adal reference
+   ```sh
+   using Microsoft.IdentityModel.Clients.ActiveDirectory; 
+  ```

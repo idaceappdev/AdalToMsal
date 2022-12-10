@@ -148,4 +148,85 @@ This project is built on top of the previous project.
     "TodoListBaseAddress": "https://localhost:44351" 
   }, 
   ```
-- Replace the content of TodoController with below line of code 
+- Declare the below variables in the TodoController class
+  
+  ```sh
+   private readonly ITokenAcquisition _tokenAcquisition;
+   IConfiguration _configuration;
+   private readonly HttpClient _httpClient; 
+  ```
+- Declare the below constructors in the TodoController class
+  
+  ```sh
+   public TodoController(ITokenAcquisition tokenAcquisition, HttpClient httpClient, IConfiguration configuration)
+     {
+         _tokenAcquisition = tokenAcquisition;
+         _configuration = configuration;
+         _httpClient = httpClient;
+     }
+  ```
+  - Declare the below method in the TodoController class
+  
+  ```sh
+    private async Task PrepareAuthenticatedClient() 
+        { 
+            //You would specify the scopes (delegated permissions) here for which you desire an Access token of this API from Azure AD. 
+            //Note that these scopes can be different from what you provided in startup.cs. 
+            //The scopes provided here can be different or more from the ones provided in Startup.cs. Note that if they are different, 
+            //then the user might be prompted to consent again. 
+            var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new List<string>()); 
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken); 
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
+        } 
+  ```
+- Comment the below line of code from get and post Index method
+ 
+   ```sh
+  AuthenticationResult result = null;
+  ```
+- Comment the below line of code.
+   ```sh
+   if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return ProcessUnauthorized(itemList, authContext);
+                    }
+  ```
+- Comment the below method
+      ```sh
+  private ActionResult ProcessUnauthorized(List<TodoItem> itemList, AuthenticationContext authContext)
+        {
+            var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
+            foreach (TokenCacheItem tci in todoTokens)
+                authContext.TokenCache.DeleteItem(tci);
+
+            ViewBag.ErrorMessage = "UnexpectedError";
+            TodoItem newItem = new TodoItem();
+            newItem.Title = "(No items in list)";
+            itemList.Add(newItem);
+            return View(itemList);
+        }
+  ```
+- Replace the below line of code in the get and post method of index
+
+  ```sh 
+   string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
+                    AuthenticationContext authContext = new AuthenticationContext(AzureAdOptions.Settings.Authority, new NaiveSessionCache(userObjectID, HttpContext.Session));
+                    ClientCredential credential = new ClientCredential(AzureAdOptions.Settings.ClientId, AzureAdOptions.Settings.ClientSecret);
+                    result = await authContext.AcquireTokenSilentAsync(AzureAdOptions.Settings.TodoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+                    // Forms encode todo item, to POST to the todo list web api.
+                    HttpContent content = new StringContent(JsonConvert.SerializeObject(new { Title = item }), System.Text.Encoding.UTF8, "application/json");
+                    //
+                    // Add the item to user's To Do List.
+                    //
+                    HttpClient client = new HttpClient();
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+                    request.Content = content;
+                    HttpResponseMessage response = await client.SendAsync(request);
+  ```
+  By 
+  
+  ```sh
+  await PrepareAuthenticatedClient();
+  ```
+  

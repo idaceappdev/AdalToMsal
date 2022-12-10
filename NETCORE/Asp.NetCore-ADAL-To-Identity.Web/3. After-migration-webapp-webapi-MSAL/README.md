@@ -179,11 +179,6 @@ This project is built on top of the previous project.
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
         } 
   ```
-- Comment the below line of code from get and post Index method
- 
-   ```sh
-  AuthenticationResult result = null;
-  ```
 - Comment the below line of code.
    ```sh
    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -192,19 +187,24 @@ This project is built on top of the previous project.
                     }
   ```
 - Comment the below method
-      ```sh
+   
+  ```sh
   private ActionResult ProcessUnauthorized(List<TodoItem> itemList, AuthenticationContext authContext)
         {
             var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
             foreach (TokenCacheItem tci in todoTokens)
-                authContext.TokenCache.DeleteItem(tci);
-
+               authContext.TokenCache.DeleteItem(tci);
             ViewBag.ErrorMessage = "UnexpectedError";
             TodoItem newItem = new TodoItem();
             newItem.Title = "(No items in list)";
             itemList.Add(newItem);
             return View(itemList);
         }
+  ```
+- Comment the below line of code from get and post Index method
+ 
+   ```sh
+  AuthenticationResult result = null;
   ```
 - Replace the below line of code in the get and post method of index
 

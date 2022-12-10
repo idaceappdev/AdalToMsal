@@ -4,8 +4,8 @@ This project had followed the insutruction from  https://learn.microsoft.com/en-
 
 ## Changes needed on TodoListService project.  
 
-- Right click on the project file and change the asp.net core target to .NET 6. 
-- Remove the existing package references including asp.net core from the project except below NUGET 
+- Right click on the project file and change the asp.net core target to .NET 6 in VS 2022. 
+- Remove the existing package references & DotNetCliToolReference from the project except below NUGET 
 
    ```sh
   <ItemGroup> 
@@ -102,8 +102,9 @@ This project had followed the insutruction from  https://learn.microsoft.com/en-
 
 ## Changes needed on TodoListWebApp project.  
 
-- Right click on the project file and change the asp.net core target to .NET 6. 
+- Right click on the project file and change the asp.net core target to .NET 6 in VS 2022. 
 - Now there are certain manual changes that need to be made to run the project in .NET 6.  
+- Remove the existing package references & DotNetCliToolReference from the project
 - Go to the startup class of the project and add below namespace  
   
   ```sh

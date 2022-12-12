@@ -17,7 +17,7 @@ This project is built on top of the previous project.
       <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="2.2.0" /> 
     </ItemGroup> 
   ```
-- Install the NUGET **Microsoft.Identity.Web** in Startup.cs file
+- Install the NUGET **Microsoft.Identity.Web** add the namespace **using Microsoft.Identity.Web;**in Startup.cs file
 - Comment the below line of code 
    
    ```sh

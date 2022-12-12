@@ -227,7 +227,7 @@ This project is built on top of the previous project.
      
      ```sh
      HttpResponseMessage response = await client.SendAsync(request);
-     ```sh
+     ```
  By 
   
   ```sh

@@ -160,17 +160,6 @@ As a first step you'll need to:
    - In the **Delegated permissions** section, ensure that the right permissions are checked: **user_impersonation**.
    - Select the **Add permissions** button.
 
-#### Configure authorized client applications for service (TodoListService-aspnetcore)
-
-For the middle tier web API (`TodoListService-aspnetcore`) to be able to call the downstream web APIs, the user must grant the middle tier permission to do so in the form of consent.
-However, since the middle tier has no interactive UI of its own, you need to explicitly bind the client app registration in Azure AD, with the registration for the web API.
-This binding merges the consent required by both the client and middle tier into a single dialog, which will be presented to the user by the client.
-You can do so by adding the "Client ID" of the client app, to the manifest of the web API in the `knownClientApplications` property. Here's how:
-
-1. In the [Azure portal](https://portal.azure.com), navigate to your `TodoListService-aspnetcore` app registration, and in the **Expose an API** section, click on **Add a client application**.
-   Input the client ID of the client application (`TodoListWebApp-aspnetcore`) and check **user_impersonation** for authorized scopes.
-1. Click **Add application**
-
 ### Step 3:  Configure the sample to use your Azure AD tenant
 
 In the steps below, "ClientID" is the same as "Application ID" or "AppId".

@@ -207,7 +207,7 @@
                     }
   ```
  
-- Remove the below line of code to get rid adal reference
+- Remove the below line of code to get rid of adal reference
    ```sh
    using Microsoft.IdentityModel.Clients.ActiveDirectory; 
   ```
@@ -224,12 +224,7 @@
   ```sh
    https://login.microsoftonline.com/<Tenant-Id>/oauth2/v2.0/authorize?client_id=<Client-Id>&redirect_uri=https%3a%2f%2flocalhost%3a44377%2fsignin-oidc&response_type=code&scope=openid+profile+offline_access+api%3 
    ```
- - You will see a consent prompt for TodoList.Read while you login to the page as below
-   
-   ![image](https://user-images.githubusercontent.com/62542910/206981054-5699881d-a173-4336-bb71-1e4c3d2408f7.png)
-
-- You have more granular permission to read the list and add/edit in MSAL. 
-- App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 
+ 
 - Go to the sign-in logs under non-interactive section and observe that, now we are reporting the MSAL version instead of ADAL, This confirms successful migration. Please do note that, interactive log may report blank or ASP.NET core module as authetication is not handled by MSAL/Identity.Web in asp.net core. It is the access token request which is implemented by the MSAL and Identity.Web.  
 
    ![image](https://user-images.githubusercontent.com/62542910/206981202-2b086f5f-e28e-4ac3-b7d6-ad745b25df82.png)

@@ -2,38 +2,24 @@
 
 # Nice to do things on top of the project leveraging the Microsoft.Identity.Web capabilities. 
 
+## 1. Usage of certificate over secrets 
+Please refer the link https://github.com/AzureAD/microsoft-identity-web/wiki/Certificates which explains hpw to use the certificate over secret with only few lines of code or configuration change. For example, on the same example, without any code change, Identity.Web can use the certificate which is present in the Keyvault and use it for authentication 
 
-## Granular level of scoping the API
-In the ADAL world we acquire the token for the resources. We can have more granular level of scoping. For example, in the current example we can have separate scoping for **Read** & && **Write** To implement this we need below changes 
+```sh
+"ClientCertificates": [
+      {
+        "SourceType": "KeyVault",
+        "KeyVaultUrl": "https://msidentitywebsamples.vault.azure.net",
+        "KeyVaultCertificateName": "MicrosoftIdentitySamplesCert"
+      }
+     ]
+  }
+```
 
-### Changes required in Azure portal
+## 2. Usage of distributed cache 
+For web apps that call web APIs and web APIs that call downstream APIs, the library provides several token cache serialization methods. Please refer the link https://github.com/AzureAD/microsoft-identity-web/wiki/token-cache-serialization
 
-- Go to the API app registration and expose 2 more scopes named as **ToDoList.Read** & **ToDoList.ReadWrite** 
-- Add these API permissions in Web app project under the API Permission blade. 
-
-### Changes needed in TodoListService project
-
-- Add the below line of code in the TodoListController  
-
-    ```sh
-     private const string _todoListReadScope = "ToDoList.Read"; 
-     private const string _todoListReadWriteScope = "ToDoList.ReadWrite"; 
-    ```
- - Declare the below attribute the Get method of the controller 
- 
-   ```sh
-   [RequiredScope( 
-            AcceptedScope = new string[] { _todoListReadScope, _todoListReadWriteScope } 
-            )] 
-    ```
-  Declare the below attribute the Post method of the controller 
-  
-   ```sh
-  [RequiredScope( 
-            AcceptedScope = new string[] { _todoListReadWriteScope } 
-            )]
-   ```
- ## Leverage Microsoft.Identity.Web in the API project to validate the token. 
+## 3. Leverage Microsoft.Identity.Web in the API project to validate the token. 
  Microsoft.Identity.Web can be used to in API porject which does the token validation. 
  
  ### Changes needed in TodoListService project
@@ -74,9 +60,47 @@ In the ADAL world we acquire the token for the resources. We can have more granu
    - AzureAdOptions.cs
 - Now the service API can validate the specific scope in the token.  
 
-## Incremental consent feature 
-- App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 
+## 4. Granular level of scoping the API
+In the ADAL world we acquire the token for the resources. We can have more granular level of scoping. For example, in the current example we can have separate scoping for **Read** & && **Write** To implement this we need below changes 
 
-## Usage of certificate over secrets 
+### Changes required in Azure portal
 
-## Usage of distributed cache 
+- Go to the API app registration and expose 2 more scopes named as **ToDoList.Read** & **ToDoList.ReadWrite** 
+- Add these API permissions in Web app project under the API Permission blade. 
+
+### Changes needed in TodoListService project
+
+- Add the below line of code in the TodoListController  
+
+    ```sh
+     private const string _todoListReadScope = "ToDoList.Read"; 
+     private const string _todoListReadWriteScope = "ToDoList.ReadWrite"; 
+    ```
+ - Declare the below attribute the Get method of the controller 
+ 
+   ```sh
+   [RequiredScope( 
+            AcceptedScope = new string[] { _todoListReadScope, _todoListReadWriteScope } 
+            )] 
+    ```
+  Declare the below attribute the Post method of the controller 
+  
+   ```sh
+  [RequiredScope( 
+            AcceptedScope = new string[] { _todoListReadWriteScope } 
+            )]
+   ```
+ 
+### Changes needed in TodoListWebApp project
+
+- Declare the below 2 scopes in the appsettings.json 
+ 
+ ```sh
+  "TodoList": {
+    "TodoListScopes": "api://<enter the client id of the TodoListService>/ToDoList.Read api://<enter the client id of the TodoListService>/ToDoList.ReadWrite",
+    "TodoListBaseAddress": "https://localhost:44351"
+  },
+```
+
+## 5. Incremental consent feature 
+App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 

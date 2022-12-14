@@ -160,17 +160,6 @@ As a first step you'll need to:
    - In the **Delegated permissions** section, ensure that the right permissions are checked: **user_impersonation**.
    - Select the **Add permissions** button.
 
-#### Configure authorized client applications for service (TodoListService-aspnetcore)
-
-For the middle tier web API (`TodoListService-aspnetcore`) to be able to call the downstream web APIs, the user must grant the middle tier permission to do so in the form of consent.
-However, since the middle tier has no interactive UI of its own, you need to explicitly bind the client app registration in Azure AD, with the registration for the web API.
-This binding merges the consent required by both the client and middle tier into a single dialog, which will be presented to the user by the client.
-You can do so by adding the "Client ID" of the client app, to the manifest of the web API in the `knownClientApplications` property. Here's how:
-
-1. In the [Azure portal](https://portal.azure.com), navigate to your `TodoListService-aspnetcore` app registration, and in the **Expose an API** section, click on **Add a client application**.
-   Input the client ID of the client application (`TodoListWebApp-aspnetcore`) and check **user_impersonation** for authorized scopes.
-1. Click **Add application**
-
 ### Step 3:  Configure the sample to use your Azure AD tenant
 
 In the steps below, "ClientID" is the same as "Application ID" or "AppId".
@@ -230,6 +219,23 @@ options.ResponseType = "id_token code";
 ```
 
 Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overriding the response type (default *id_token*), the `OnTokenValidated` event is fired instead of `OnAuthorizationCodeReceived`. The line above requests **both** *id_token* and *code*, so that `OnTokenValidated` is called first. This ensures that `context.Principal` has a non-null value representing the signed-in user when `OnAuthorizeationCodeReceived` is called.
+
+### Verifying this app is using ADAL
+
+1. Notice the URL during the sign-in process which will be using the V1 endpoint.
+
+  ![image](https://user-images.githubusercontent.com/62542910/206369207-7759357e-fea9-45e0-8a36-b994ee56b757.png)
+    
+    https://login.microsoftonline.com/<Tenant_ID>/oauth2/authorize?client_id=<client_id>&redirect_uri=https%3a%2f%2flocalhost%3a44377%2fsignin-oidc&resource=https%3a%2f%2fgraph.microsoft.com&response_type=id_token
+  
+2. Go to Azure portal and observe the sign -in logs and click on the additional details tab and observe the ADAL information(under non-interactive logs)
+    
+    ![image](https://user-images.githubusercontent.com/62542910/206378418-83948cbe-bf09-4a3a-a266-bfc51c4aa4b4.png)
+
+3. If you have setup the workbook solution to track the ADAL apps as explained [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps) then you will see the entry as below  
+    
+    ![image](https://user-images.githubusercontent.com/62542910/206378709-e60e6704-aeb2-49df-bb7d-460112370264.png)
+
 
 ### How to change the app URL
 If you are using Visual Studio 2017

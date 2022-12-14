@@ -16,3 +16,7 @@ This sample demonstrates an ASP.NET Core client Web App calling an ASP.NET Core 
 - Taking the above into consideration, we are going to demostrate the two approaches that can be taken. 
   - Migrate the .NET core version to .NEt 6 and then complete the ADAL to MSAL migration ( Reccomanded approach)
   - In the existing project use the MSAL.NET instead of ADAL.NET ( Not advisable )
+
+## Project structure 
+- The first folder [1.Before-webapp-webapi-ADAL](1.Before-webapp-webapi-ADAL) has the the project where ASP.NET 2.2 core project is migrated to .NET 6 and then used Microsoft.Identity.Web
+- The second folder [2. Intermediate-NETMigration-webapp-webapi](2.%20Intermediate-NETMigration-webapp-webapi)simply uses the MSAL.NET in place of ADAL.NET

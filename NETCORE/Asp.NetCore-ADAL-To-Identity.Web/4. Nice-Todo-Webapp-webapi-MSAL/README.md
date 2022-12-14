@@ -65,3 +65,11 @@ This project is built on top of the previous project.
    - AzureAdAuthenticationBuilderExtensions.cs
    - AzureAdOptions.cs
 - Now the service API can validate the specific scope in the token.  
+
+
+- You will see a consent prompt for TodoList.Read while you login to the page as below
+   
+   ![image](https://user-images.githubusercontent.com/62542910/206981054-5699881d-a173-4336-bb71-1e4c3d2408f7.png)
+
+- You have more granular permission to read the list and add/edit in MSAL. 
+- App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 

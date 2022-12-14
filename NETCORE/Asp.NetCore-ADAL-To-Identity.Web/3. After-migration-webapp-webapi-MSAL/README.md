@@ -31,8 +31,7 @@
             }) 
             .AddCookie(); 
             services.AddMvc() 
-                .AddSessionStateTempDataProvider(); 
-            services.AddSession();   
+                .AddSessionStateTempDataProvider();            
     ```
  - Add below namespaces in the **Startup.cs**
   
@@ -70,16 +69,11 @@
             }).AddMicrosoftIdentityUI(); 
             services.AddRazorPages(); 
    ```
-- Comment the below line of code 
-
-  ```sh
-  app.UseSession(); 
-  ```
-  Add below line of json in the appsettings.json 
+- Add below line of json in the appsettings.json 
   
   ```sh
    "TodoList": { 
-    "TodoListScopes": "api://<API-ID>/ToDoList.Read api://<API-ID>/ToDoList.ReadWrite", 
+    "TodoListScopes": "api://<API-ID>/user_impersonation", 
     "TodoListBaseAddress": "https://localhost:44351" 
   }, 
   ```
@@ -114,21 +108,50 @@
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
         } 
   ```
-- Comment the below line of code.
+- Comment the below line of code from get Index method
+ 
+   ```sh
+   AuthenticationResult result = null;
+  ```
+- Comment the below line of code in the get method of index
+
+  ```sh 
+  string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
+
+                // Using ADAL.Net, get a bearer token to access the TodoListService
+                AuthenticationContext authContext = new AuthenticationContext(AzureAdOptions.Settings.Authority, new NaiveSessionCache(userObjectID, HttpContext.Session));
+                ClientCredential credential = new ClientCredential(AzureAdOptions.Settings.ClientId, AzureAdOptions.Settings.ClientSecret);
+                result = await authContext.AcquireTokenSilentAsync(AzureAdOptions.Settings.TodoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+
+                // Retrieve the user's To Do List.
+                HttpClient client = new HttpClient();
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+                HttpResponseMessage response = await client.SendAsync(request);               
+  ```
+- In place of the above code, please paste the below snippet.
+  
+  ```sh
+   await PrepareAuthenticatedClient();
+   HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
+  ```
+- Remove the reference of Authentication Context as shown in the below code snippet.
    ```sh
    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
-                        return ProcessUnauthorized(itemList, authContext);
+                        return ProcessUnauthorized(itemList);
                     }
   ```
-- Comment the below method
-   
-  ```sh
-  private ActionResult ProcessUnauthorized(List<TodoItem> itemList, AuthenticationContext authContext)
+
+- Modify the **ProcessUnauthorized** method definition as below
+
+   ```sh
+   private ActionResult ProcessUnauthorized(List<TodoItem> itemList)
         {
-            var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
-            foreach (TokenCacheItem tci in todoTokens)
-               authContext.TokenCache.DeleteItem(tci);
+            //var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
+            //foreach (TokenCacheItem tci in todoTokens)
+            //    authContext.TokenCache.DeleteItem(tci);
+
             ViewBag.ErrorMessage = "UnexpectedError";
             TodoItem newItem = new TodoItem();
             newItem.Title = "(No items in list)";
@@ -136,74 +159,60 @@
             return View(itemList);
         }
   ```
-- Comment the below line of code from get and post Index method
+
+- Repeat the same for the post method of index
+
+- Comment the below line of code from Post Index method
  
-   ```sh
-  AuthenticationResult result = null;
+  ```sh
+   AuthenticationResult result = null;
   ```
-- Comment the below line of code in the get and post method of index
+- Comment the below line of code in the get method of index
 
   ```sh 
    string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
                     AuthenticationContext authContext = new AuthenticationContext(AzureAdOptions.Settings.Authority, new NaiveSessionCache(userObjectID, HttpContext.Session));
                     ClientCredential credential = new ClientCredential(AzureAdOptions.Settings.ClientId, AzureAdOptions.Settings.ClientSecret);
                     result = await authContext.AcquireTokenSilentAsync(AzureAdOptions.Settings.TodoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+
                     // Forms encode todo item, to POST to the todo list web api.
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(new { Title = item }), System.Text.Encoding.UTF8, "application/json");
+
                     //
                     // Add the item to user's To Do List.
                     //
                     HttpClient client = new HttpClient();
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                    request.Content = content;                  
+                    request.Content = content;
+                    HttpResponseMessage response = await client.SendAsync(request);
+        
   ```
-- Replace the line of code in the get version of Index
-     
-     ```sh
-     HttpResponseMessage response = await client.SendAsync(request);
-     ```
- By 
+- In place of the above code, please paste the below snippet.
   
   ```sh
-  await PrepareAuthenticatedClient();
-  HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
+   await PrepareAuthenticatedClient();
+                    var jsonRequest = JsonConvert.SerializeObject(new { Title = item });
+                    var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
+
   ```
-- Replace the line of code in the Post version of Index
-     
-     ```sh
-     HttpResponseMessage response = await client.SendAsync(request);
-     ```
- By 
-  
-  ```sh
-  await PrepareAuthenticatedClient();
-      var jsonRequest = JsonConvert.SerializeObject(new { Title = item });
-      var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-  HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
-  ```  
+- Remove the reference of Authentication Context as shown in the below code snippet.
+   ```sh
+   if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return ProcessUnauthorized(itemList);
+                    }
+  ```
+ 
 - Remove the below line of code to get rid adal reference
    ```sh
    using Microsoft.IdentityModel.Clients.ActiveDirectory; 
   ```
 - Specify the asp are path as MicrosoftIdentity under the views/shared folder in the file _LoginPartial,cshtml 
    
-   Replace the line 
-   ```sh   
-   <li><a asp-area="" asp-controller="Account" asp-action="Signin">Sign in</a></li> 
-   ```
-   By 
-   ```sh   
-   <li><a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="Signin">Sign in</a></li> 
-   ```
-   Replace the line 
-   ```sh
-   <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li> 
-   ```
-   By 
-   ```sh
-   <li><a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a></li> 
-   ```
+   Update asp-area value to **MicrosoftIdentity** instead of blank
+  
 - Build the project and run it .
 
 ## Steps to verify that app is using MSAL.

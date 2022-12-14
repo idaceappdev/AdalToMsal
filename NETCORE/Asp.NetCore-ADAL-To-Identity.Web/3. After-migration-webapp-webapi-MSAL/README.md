@@ -10,7 +10,9 @@
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" /> 
   </ItemGroup> 
     ```
- - Install the NUGET **Microsoft.Identity.Web.UI** & **Newtonsoft.Json**
+ - Install below NUGET packages 
+   - Microsoft.Identity.Web.UI
+   - Newtonsoft.Json
  - Comment all the code from the below files  
    - AzureAdAuthenticationBuilderExtensions.cs
    - AzureAdOptions.cs

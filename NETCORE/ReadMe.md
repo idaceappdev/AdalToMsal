@@ -19,4 +19,4 @@ This sample demonstrates an ASP.NET Core client Web App calling an ASP.NET Core 
 
 ## Project structure 
 - The first folder [Asp.NetCore-ADAL-To-Identity.Web](Asp.NetCore-ADAL-To-Identity.Web) has the the project where ASP.NET 2.2 core project is migrated to .NET 6 and then used Microsoft.Identity.Web
-- The second folder [2. Intermediate-NETMigration-webapp-webapi](2.%20Intermediate-NETMigration-webapp-webapi)simply uses the MSAL.NET in place of ADAL.NET
+- The second folder [Asp.NetCore-ADAL-To-MSAL](Asp.NetCore-ADAL-To-MSAL)simply uses the MSAL.NET in place of ADAL.NET

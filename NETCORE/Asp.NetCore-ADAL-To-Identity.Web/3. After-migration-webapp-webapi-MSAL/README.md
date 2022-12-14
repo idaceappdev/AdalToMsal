@@ -1,70 +1,5 @@
 # Migration steps to be followed to migrate to Identity.Web(MSAL) and from ADAL in .NET 6
 
-This project is built on top of the previous project. 
-
-## Changes needed in Azure portal
-
-- Go to the API app registration and expose 2 more scopes named as **ToDoList.Read** & **ToDoList.ReadWrite** 
-- Add these API permissions in Web app project under the API Permission blade. 
-
-## Changes needed in TodoListService project
-
-- The TodoListService API does not use the ADAL library and doesn’t need any changes. But it is advisable to follow the below steps which takes care of validatation of the token.
-- Remove the below package reference  
-
-   ```sh
-   <ItemGroup> 
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="2.2.0" /> 
-    </ItemGroup> 
-  ```
-- Install the NUGET **Microsoft.Identity.Web** add the namespace **using Microsoft.Identity.Web;**in Startup.cs file
-- Comment the below line of code 
-   
-   ```sh
-    using Microsoft.AspNetCore.Authentication.AzureAD.UI; 
-    using Microsoft.AspNetCore.Authentication.JwtBearer; 
-  ```
- - Replace the below code  
- 
-  ```sh
-     services.AddAuthentication(sharedOptions => 
-            { 
-                sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; 
-            }) 
-            .AddAzureAdBearer(options => Configuration.Bind("AzureAd", options)); 
-  ```
-  By 
-
-  ```sh
-    JwtSecurityTokenHandler.DefaultMapInboundClaims = false; 
-    services.AddMicrosoftIdentityWebApiAuthentication(Configuration); 
-  ```
-- Add the below line of code in the TodoListController  
-
-    ```sh
-     private const string _todoListReadScope = "ToDoList.Read"; 
-     private const string _todoListReadWriteScope = "ToDoList.ReadWrite"; 
-    ```
- - Declare the below attribute the Get method of the controller 
- 
-   ```sh
-   [RequiredScope( 
-            AcceptedScope = new string[] { _todoListReadScope, _todoListReadWriteScope } 
-            )] 
-    ```
-  Declare the below attribute the Post method of the controller 
-  
-   ```sh
-  [RequiredScope( 
-            AcceptedScope = new string[] { _todoListReadWriteScope } 
-            )]
-   ```
-- Comment all the code from the below files  
-  
-   - AzureAdAuthenticationBuilderExtensions.cs
-   - AzureAdOptions.cs
-- Now the service API can validate the specific scope in the token.  
-
 ## Changes needed in TodoListWebApp project
 
 - Remove the below package reference  
@@ -75,7 +10,9 @@ This project is built on top of the previous project.
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" /> 
   </ItemGroup> 
     ```
- - Install the NUGET **Microsoft.Identity.Web.UI** & **Newtonsoft.Json**
+ - Install below NUGET packages 
+   - Microsoft.Identity.Web.UI
+   - Newtonsoft.Json
  - Comment all the code from the below files  
    - AzureAdAuthenticationBuilderExtensions.cs
    - AzureAdOptions.cs
@@ -96,8 +33,7 @@ This project is built on top of the previous project.
             }) 
             .AddCookie(); 
             services.AddMvc() 
-                .AddSessionStateTempDataProvider(); 
-            services.AddSession();   
+                .AddSessionStateTempDataProvider();            
     ```
  - Add below namespaces in the **Startup.cs**
   
@@ -135,16 +71,11 @@ This project is built on top of the previous project.
             }).AddMicrosoftIdentityUI(); 
             services.AddRazorPages(); 
    ```
-- Comment the below line of code 
-
-  ```sh
-  app.UseSession(); 
-  ```
-  Add below line of json in the appsettings.json 
+- Add below line of json in the appsettings.json 
   
   ```sh
    "TodoList": { 
-    "TodoListScopes": "api://<API-ID>/ToDoList.Read api://<API-ID>/ToDoList.ReadWrite", 
+    "TodoListScopes": "api://<API-ID>/user_impersonation", 
     "TodoListBaseAddress": "https://localhost:44351" 
   }, 
   ```
@@ -179,21 +110,50 @@ This project is built on top of the previous project.
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
         } 
   ```
-- Comment the below line of code.
+- Comment the below line of code from get Index method
+ 
+   ```sh
+   AuthenticationResult result = null;
+  ```
+- Comment the below line of code in the get method of index
+
+  ```sh 
+  string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
+
+                // Using ADAL.Net, get a bearer token to access the TodoListService
+                AuthenticationContext authContext = new AuthenticationContext(AzureAdOptions.Settings.Authority, new NaiveSessionCache(userObjectID, HttpContext.Session));
+                ClientCredential credential = new ClientCredential(AzureAdOptions.Settings.ClientId, AzureAdOptions.Settings.ClientSecret);
+                result = await authContext.AcquireTokenSilentAsync(AzureAdOptions.Settings.TodoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+
+                // Retrieve the user's To Do List.
+                HttpClient client = new HttpClient();
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+                HttpResponseMessage response = await client.SendAsync(request);               
+  ```
+- In place of the above code, please paste the below snippet.
+  
+  ```sh
+   await PrepareAuthenticatedClient();
+   HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
+  ```
+- Remove the reference of Authentication Context as shown in the below code snippet.
    ```sh
    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
-                        return ProcessUnauthorized(itemList, authContext);
+                        return ProcessUnauthorized(itemList);
                     }
   ```
-- Comment the below method
-   
-  ```sh
-  private ActionResult ProcessUnauthorized(List<TodoItem> itemList, AuthenticationContext authContext)
+
+- Modify the **ProcessUnauthorized** method definition as below
+
+   ```sh
+   private ActionResult ProcessUnauthorized(List<TodoItem> itemList)
         {
-            var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
-            foreach (TokenCacheItem tci in todoTokens)
-               authContext.TokenCache.DeleteItem(tci);
+            //var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
+            //foreach (TokenCacheItem tci in todoTokens)
+            //    authContext.TokenCache.DeleteItem(tci);
+
             ViewBag.ErrorMessage = "UnexpectedError";
             TodoItem newItem = new TodoItem();
             newItem.Title = "(No items in list)";
@@ -201,74 +161,60 @@ This project is built on top of the previous project.
             return View(itemList);
         }
   ```
-- Comment the below line of code from get and post Index method
+
+- Repeat the same for the post method of index
+
+- Comment the below line of code from Post Index method
  
-   ```sh
-  AuthenticationResult result = null;
+  ```sh
+   AuthenticationResult result = null;
   ```
-- Comment the below line of code in the get and post method of index
+- Comment the below line of code in the get method of index
 
   ```sh 
    string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
                     AuthenticationContext authContext = new AuthenticationContext(AzureAdOptions.Settings.Authority, new NaiveSessionCache(userObjectID, HttpContext.Session));
                     ClientCredential credential = new ClientCredential(AzureAdOptions.Settings.ClientId, AzureAdOptions.Settings.ClientSecret);
                     result = await authContext.AcquireTokenSilentAsync(AzureAdOptions.Settings.TodoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+
                     // Forms encode todo item, to POST to the todo list web api.
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(new { Title = item }), System.Text.Encoding.UTF8, "application/json");
+
                     //
                     // Add the item to user's To Do List.
                     //
                     HttpClient client = new HttpClient();
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                    request.Content = content;                  
+                    request.Content = content;
+                    HttpResponseMessage response = await client.SendAsync(request);
+        
   ```
-- Replace the line of code in the get version of Index
-     
-     ```sh
-     HttpResponseMessage response = await client.SendAsync(request);
-     ```
- By 
+- In place of the above code, please paste the below snippet.
   
   ```sh
-  await PrepareAuthenticatedClient();
-  HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
+   await PrepareAuthenticatedClient();
+                    var jsonRequest = JsonConvert.SerializeObject(new { Title = item });
+                    var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
+
   ```
-- Replace the line of code in the Post version of Index
-     
-     ```sh
-     HttpResponseMessage response = await client.SendAsync(request);
-     ```
- By 
-  
-  ```sh
-  await PrepareAuthenticatedClient();
-      var jsonRequest = JsonConvert.SerializeObject(new { Title = item });
-      var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-  HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
-  ```  
-- Remove the below line of code to get rid adal reference
+- Remove the reference of Authentication Context as shown in the below code snippet.
+   ```sh
+   if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return ProcessUnauthorized(itemList);
+                    }
+  ```
+ 
+- Remove the below line of code to get rid of adal reference
    ```sh
    using Microsoft.IdentityModel.Clients.ActiveDirectory; 
   ```
 - Specify the asp are path as MicrosoftIdentity under the views/shared folder in the file _LoginPartial,cshtml 
    
-   Replace the line 
-   ```sh   
-   <li><a asp-area="" asp-controller="Account" asp-action="Signin">Sign in</a></li> 
-   ```
-   By 
-   ```sh   
-   <li><a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="Signin">Sign in</a></li> 
-   ```
-   Replace the line 
-   ```sh
-   <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li> 
-   ```
-   By 
-   ```sh
-   <li><a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a></li> 
-   ```
+   Update asp-area value to **MicrosoftIdentity** instead of blank
+  
 - Build the project and run it .
 
 ## Steps to verify that app is using MSAL.
@@ -278,12 +224,7 @@ This project is built on top of the previous project.
   ```sh
    https://login.microsoftonline.com/<Tenant-Id>/oauth2/v2.0/authorize?client_id=<Client-Id>&redirect_uri=https%3a%2f%2flocalhost%3a44377%2fsignin-oidc&response_type=code&scope=openid+profile+offline_access+api%3 
    ```
- - You will see a consent prompt for TodoList.Read while you login to the page as below
-   
-   ![image](https://user-images.githubusercontent.com/62542910/206981054-5699881d-a173-4336-bb71-1e4c3d2408f7.png)
-
-- You have more granular permission to read the list and add/edit in MSAL. 
-- App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 
+ 
 - Go to the sign-in logs under non-interactive section and observe that, now we are reporting the MSAL version instead of ADAL, This confirms successful migration. Please do note that, interactive log may report blank or ASP.NET core module as authetication is not handled by MSAL/Identity.Web in asp.net core. It is the access token request which is implemented by the MSAL and Identity.Web.  
 
    ![image](https://user-images.githubusercontent.com/62542910/206981202-2b086f5f-e28e-4ac3-b7d6-ad745b25df82.png)

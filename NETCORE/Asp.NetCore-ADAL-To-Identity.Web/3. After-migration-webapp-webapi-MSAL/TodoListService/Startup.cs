@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.AzureAD.UI;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Web;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace TodoListService
 {
@@ -23,16 +21,13 @@ namespace TodoListService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication(sharedOptions =>
-            //{
-            //    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //.AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
+            services.AddAuthentication(sharedOptions =>
+            {
+                sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
 
-            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
-            // Adds Microsoft Identity platform (AAD v2.0) support to protect this Api
-            services.AddMicrosoftIdentityWebApiAuthentication(Configuration);
 
             //services.AddMvc();
 

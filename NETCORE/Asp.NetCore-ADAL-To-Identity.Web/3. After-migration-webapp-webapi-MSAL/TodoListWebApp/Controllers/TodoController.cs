@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
 using Microsoft.Identity.Web;
 //using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
@@ -24,8 +23,6 @@ namespace TodoListWebApp.Controllers
     [Authorize]
     public class TodoController : Controller
     {
-        // GET: /<controller>/
-
         private readonly ITokenAcquisition _tokenAcquisition;
         IConfiguration _configuration;
         private readonly HttpClient _httpClient;
@@ -38,23 +35,22 @@ namespace TodoListWebApp.Controllers
         }
         private async Task PrepareAuthenticatedClient()
         {
-            //You would specify the scopes (delegated permissions) here for which you desire an Access token of this API from Azure AD.
-            //Note that these scopes can be different from what you provided in startup.cs.
-            //The scopes provided here can be different or more from the ones provided in Startup.cs. Note that if they are different,
-            //then the user might be prompted to consent again.
+            //You would specify the scopes (delegated permissions) here for which you desire an Access token of this API from Azure AD. 
+            //Note that these scopes can be different from what you provided in startup.cs. 
+            //The scopes provided here can be different or more from the ones provided in Startup.cs. Note that if they are different, 
+            //then the user might be prompted to consent again. 
             var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new List<string>());
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
+        // GET: /<controller>/
         public async Task<IActionResult> Index()
         {
-           // AuthenticationResult result = null;
+            //AuthenticationResult result = null;
             List<TodoItem> itemList = new List<TodoItem>();
 
             try
             {
-                await PrepareAuthenticatedClient();
-
                 // Because we signed-in already in the WebApp, the userObjectId is know
                 //string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
@@ -67,8 +63,10 @@ namespace TodoListWebApp.Controllers
                 //HttpClient client = new HttpClient();
                 //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
                 //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
+                //HttpResponseMessage response = await client.SendAsync(request);
 
+                await PrepareAuthenticatedClient();
+                HttpResponseMessage response = await _httpClient.GetAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist");
                 // Return the To Do List in the view.
                 if (response.IsSuccessStatusCode)
                 {
@@ -91,11 +89,10 @@ namespace TodoListWebApp.Controllers
                 // If the call failed with access denied, then drop the current access token from the cache, 
                 //     and show the user an error indicating they might need to sign-in again.
                 //
-                //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                //{
-                //    return ProcessUnauthorized(itemList, authContext);
-                //}
-                return null;
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return ProcessUnauthorized(itemList);
+                }
             }
             catch (Exception ex)
             {
@@ -124,7 +121,7 @@ namespace TodoListWebApp.Controllers
             //
             // If the call failed for any other reason, show the user an error.
             //
-            // return View("Error");
+            return View("Error");
         }
 
         [HttpPost]
@@ -135,7 +132,7 @@ namespace TodoListWebApp.Controllers
                 //
                 // Retrieve the user's tenantID and access token since they are parameters used to call the To Do service.
                 //
-                //  AuthenticationResult result = null;
+                //AuthenticationResult result = null;
                 List<TodoItem> itemList = new List<TodoItem>();
 
                 try
@@ -155,11 +152,11 @@ namespace TodoListWebApp.Controllers
                     //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, AzureAdOptions.Settings.TodoListBaseAddress + "/api/todolist");
                     //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
                     //request.Content = content;
-                    await PrepareAuthenticatedClient();
+                    //HttpResponseMessage response = await client.SendAsync(request);
 
+                    await PrepareAuthenticatedClient();
                     var jsonRequest = JsonConvert.SerializeObject(new { Title = item });
                     var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
                     HttpResponseMessage response = await _httpClient.PostAsync(_configuration["TodoList:TodoListBaseAddress"] + "/api/todolist", jsoncontent);
 
                     //
@@ -174,12 +171,10 @@ namespace TodoListWebApp.Controllers
                     // If the call failed with access denied, then drop the current access token from the cache, 
                     //     and show the user an error indicating they might need to sign-in again.
                     //
-                    //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    //{
-                    //    return ProcessUnauthorized(itemList, authContext);
-                    //}
-
-                    return null;
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return ProcessUnauthorized(itemList);
+                    }
                 }
                 catch (Exception)
                 {
@@ -195,22 +190,22 @@ namespace TodoListWebApp.Controllers
                 //
                 // If the call failed for any other reason, show the user an error.
                 //
-                // return View("Error");
+                return View("Error");
             }
             return View("Error");
         }
 
-        //private ActionResult ProcessUnauthorized(List<TodoItem> itemList, AuthenticationContext authContext)
-        //{
-        //    var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
-        //    foreach (TokenCacheItem tci in todoTokens)
-        //        authContext.TokenCache.DeleteItem(tci);
+        private ActionResult ProcessUnauthorized(List<TodoItem> itemList)
+        {
+            //var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
+            //foreach (TokenCacheItem tci in todoTokens)
+            //    authContext.TokenCache.DeleteItem(tci);
 
-        //    ViewBag.ErrorMessage = "UnexpectedError";
-        //    TodoItem newItem = new TodoItem();
-        //    newItem.Title = "(No items in list)";
-        //    itemList.Add(newItem);
-        //    return View(itemList);
-        //}
+            ViewBag.ErrorMessage = "UnexpectedError";
+            TodoItem newItem = new TodoItem();
+            newItem.Title = "(No items in list)";
+            itemList.Add(newItem);
+            return View(itemList);
+        }
     }
 }

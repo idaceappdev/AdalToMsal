@@ -1,15 +1,42 @@
 
 
-# Nice to do things
-This project is built on top of the previous project. 
+# Nice to do things on top of the project leveraging the Microsoft.Identity.Web capabilities. 
 
-## Changes needed in Azure portal
+
+## Granular level of scoping the API
+In the ADAL world we acquire the token for the resources. We can have more granular level of scoping. For example, in the current example we can have separate scoping for **Read** & && **Write** To implement this we need below changes 
+
+### Changes required in Azure portal
 
 - Go to the API app registration and expose 2 more scopes named as **ToDoList.Read** & **ToDoList.ReadWrite** 
 - Add these API permissions in Web app project under the API Permission blade. 
 
-## Changes needed in TodoListService project
+### Changes needed in TodoListService project
 
+- Add the below line of code in the TodoListController  
+
+    ```sh
+     private const string _todoListReadScope = "ToDoList.Read"; 
+     private const string _todoListReadWriteScope = "ToDoList.ReadWrite"; 
+    ```
+ - Declare the below attribute the Get method of the controller 
+ 
+   ```sh
+   [RequiredScope( 
+            AcceptedScope = new string[] { _todoListReadScope, _todoListReadWriteScope } 
+            )] 
+    ```
+  Declare the below attribute the Post method of the controller 
+  
+   ```sh
+  [RequiredScope( 
+            AcceptedScope = new string[] { _todoListReadWriteScope } 
+            )]
+   ```
+ ## Leverage Microsoft.Identity.Web in the API project to validate the token. 
+ Microsoft.Identity.Web can be used to in API porject which does the token validation. 
+ 
+ ### Changes needed in TodoListService project
 - The TodoListService API does not use the ADAL library and doesn’t need any changes. But it is advisable to follow the below steps which takes care of validatation of the token.
 - Remove the below package reference  
 
@@ -40,36 +67,16 @@ This project is built on top of the previous project.
     JwtSecurityTokenHandler.DefaultMapInboundClaims = false; 
     services.AddMicrosoftIdentityWebApiAuthentication(Configuration); 
   ```
-- Add the below line of code in the TodoListController  
 
-    ```sh
-     private const string _todoListReadScope = "ToDoList.Read"; 
-     private const string _todoListReadWriteScope = "ToDoList.ReadWrite"; 
-    ```
- - Declare the below attribute the Get method of the controller 
- 
-   ```sh
-   [RequiredScope( 
-            AcceptedScope = new string[] { _todoListReadScope, _todoListReadWriteScope } 
-            )] 
-    ```
-  Declare the below attribute the Post method of the controller 
-  
-   ```sh
-  [RequiredScope( 
-            AcceptedScope = new string[] { _todoListReadWriteScope } 
-            )]
-   ```
 - Comment all the code from the below files  
   
    - AzureAdAuthenticationBuilderExtensions.cs
    - AzureAdOptions.cs
 - Now the service API can validate the specific scope in the token.  
 
-
-- You will see a consent prompt for TodoList.Read while you login to the page as below
-   
-   ![image](https://user-images.githubusercontent.com/62542910/206981054-5699881d-a173-4336-bb71-1e4c3d2408f7.png)
-
-- You have more granular permission to read the list and add/edit in MSAL. 
+## Incremental consent feature 
 - App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 
+
+## Usage of certificate over secrets 
+
+## Usage of distributed cache 

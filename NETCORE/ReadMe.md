@@ -15,7 +15,7 @@ This sample demonstrates an ASP.NET Core client Web App calling an ASP.NET Core 
 - As far as support is considered, the minimum supported .NET version is .NET 6. Please refer the link https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core
 - Taking the above into consideration, we are going to demostrate the two approaches that can be taken. 
   - Migrate the .NET core version to .NEt 6 and then complete the ADAL to MSAL migration ( Reccomanded approach)
-  - In the existing project use the MSAL.NET instead of ADAL.NET ( Not advisable )
+  - In the existing project use the MSAL.NET instead of ADAL.NET 
 
 ## Project structure 
 - The first folder [Asp.NetCore-ADAL-To-Identity.Web](Asp.NetCore-ADAL-To-Identity.Web) has the the project where ASP.NET 2.2 core project is migrated to .NET 6 and then used Microsoft.Identity.Web

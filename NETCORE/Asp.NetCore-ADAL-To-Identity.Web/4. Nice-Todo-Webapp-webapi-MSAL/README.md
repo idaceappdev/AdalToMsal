@@ -104,3 +104,42 @@ In the ADAL world we acquire the token for the resources. We can have more granu
 
 ## 5. Incremental consent feature 
 App could also leverage the incremental consent feature by following the instructions at https://github.com/AzureAD/microsoft-identity-web/wiki/Managing-incremental-consent-and-conditional-access which will avoid the upfront consent for all the permissions 
+
+## 6. Proof Of Possession (PoP) tokens
+Bearer tokens are the norm in modern identity flows, however they are vulnerable to being stolen and used to access a protected resource. Please refer the link for more details https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Proof-Of-Possession-%28PoP%29-tokens
+
+## 7. Continuous Access Evaluation 
+CAE is an Azure AD feature that allows access tokens to be revoked based on critical events and policy evaluation rather than relying on token expiry based on lifetime. Please refer the link https://learn.microsoft.com/en-us/azure/active-directory/develop/app-resilience-continuous-access-evaluation?tabs=dotnet
+
+Current sample doesnt use graph API. If any web app calls the graph api, we can leverage the CAE feature below configuration 
+ ```sh
+{
+  "AzureAd": {
+    // ...
+    // the following is required to handle Continuous Access Evaluation challenges
+    "ClientCapabilities": [ "cp1" ],
+    // ...
+  },
+  // ...
+}
+ ```
+Code to handle the CAE exception 
+
+ ```sh
+ // Catch CAE exception from Graph SDK
+  catch (ServiceException svcex) when (svcex.Message.Contains("Continuous access evaluation resulted in claims challenge"))
+  {
+    try
+    {
+      Console.WriteLine($"{svcex}");
+      string claimChallenge = WwwAuthenticateParameters.GetClaimChallengeFromResponseHeaders(svcex.ResponseHeaders);
+      _consentHandler.ChallengeUser(_graphScopes, claimChallenge);
+      return new EmptyResult();
+    }
+    catch (Exception ex2)
+    {
+      _consentHandler.HandleException(ex2);
+    }
+  }   
+   ```
+Here is the code sample - https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/2-WebApp-graph-user/2-1-Call-MSGraph

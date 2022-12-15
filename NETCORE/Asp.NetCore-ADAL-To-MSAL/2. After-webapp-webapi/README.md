@@ -1,5 +1,5 @@
 
-# Migration steps to be followed to migrate to Identity.Web (MSAL)
+# Migration steps to be followed to migrate to Identity.Client (MSAL)
 This project is build on top ot the previous one.
 
 ## About this scenario
@@ -123,12 +123,19 @@ var authResult = await app.AcquireTokenByAuthorizationCode(
                .ConfigureAwait(false); 
 ```
 
-### Inside the ***TodoController.cs***, we need to update the references used by including
+### Inside the ***TodoController.cs***, we need to update the references used by:
 
+Including
 ```
-using Microsoft.Identity.Client;
+using Microsoft.Identity.Client; //MSAL.Net
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Http;
+```
+
+And removing
+```
+using System.Linq;
+using Microsoft.IdentityModel.Clients.ActiveDirectory; //ADAL.Net
 ```
 
 ### Inside the ***TodoController.cs*** file add a constructor  
@@ -144,13 +151,13 @@ public TodoController(IHttpContextAccessor context)
 ### Add the below method in the ***TodoController.cs*** 
 
 ```
-public async Task<Microsoft.Identity.Client.AuthenticationResult> GetAuthenticationResult(string resourceId) 
+public async Task<AuthenticationResult> GetAuthenticationResult(string resourceId) 
 { 
    IConfidentialClientApplication app = MsalAppBuilder.BuildConfidentialClientApplication(AzureAdOptions.Settings.ClientId, 
             AzureAdOptions.Settings.ClientSecret, AzureAdOptions.Settings.Authority,
             string.Format("{0}://{1}{2}", _context.HttpContext.Request.Scheme, _context.HttpContext.Request.Host, AzureAdOptions.Settings.CallbackPath)); 
 
-   Microsoft.Identity.Client.AuthenticationResult authResult; 
+   AuthenticationResult authResult; 
 
    var scopes = new[] { $"{resourceId}/.default" }; 
    var account = await app.GetAccountAsync(string.Format("{0}.{1}", HttpContext.User.GetObjectId(), HttpContext.User.GetTenantId())); 
@@ -174,28 +181,6 @@ public async Task<Microsoft.Identity.Client.AuthenticationResult> GetAuthenticat
    return authResult; 
 } 
 ```
- 
-
-### In ***TodoController.cs***, for Index controller
-
-Replace: 
-```
-AuthenticationResult result = null; 
-```
-
-With 
-```
-Microsoft.Identity.Client.AuthenticationResult result = null; 
-```
-
-### In ***TodoController.cs***, comment the bellow section for Index controller 
-
-```
-if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) 
-{ 
-   return ProcessUnauthorized(itemList, authContext); 
-} 
-```
 
 ### In ***TodoController.cs***, for Index controller  
 
@@ -212,15 +197,31 @@ result = await authContext.AcquireTokenSilentAsync(AzureAdOptions.Settings.TodoL
 
 Add the below code 
 ```
-string homeAccountId =  User.GetMsalAccountId();
 result = await GetAuthenticationResult(AzureAdOptions.Settings.TodoListResourceId); 
 ```
 
-### In ***TodoController.cs***, comment the bellow section in the index controller
+### In ***TodoController.cs***, update the call to ProcessUnauthorized from Index controller
 
+From:
 ```
 if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
 {
    return ProcessUnauthorized(itemList, authContext);
 }
+```
+
+To: 
+```
+if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+{
+    return ProcessUnauthorized(itemList);
+}
+```
+
+### In ***TodoController.cs***, update ProcessUnauthorized from Index controller by removing
+
+```
+var todoTokens = authContext.TokenCache.ReadItems().Where(a => a.Resource == AzureAdOptions.Settings.TodoListResourceId);
+foreach (TokenCacheItem tci in todoTokens)
+authContext.TokenCache.DeleteItem(tci);
 ```

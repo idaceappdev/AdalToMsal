@@ -1,4 +1,4 @@
-import adal
+import msal
 import flask
 import uuid
 import requests
@@ -11,9 +11,6 @@ app.secret_key = 'development'
 PORT = 5000  # A flask app by default runs on PORT 5000
 AUTHORITY_URL = config.AUTHORITY_HOST_URL + '/' + config.TENANT
 REDIRECT_URI = 'http://localhost:{}/getAToken'.format(PORT)
-TEMPLATE_AUTHZ_URL = ('https://login.microsoftonline.com/{}/oauth2/authorize?' +
-                      'response_type=code&client_id={}&redirect_uri={}&' +
-                      'state={}&resource={}')
 
 
 @app.route("/")
@@ -25,34 +22,31 @@ def main():
 
 
 @app.route("/login")
-def login():
-    auth_state = str(uuid.uuid4())
-    flask.session['state'] = auth_state
-    authorization_url = TEMPLATE_AUTHZ_URL.format(
-        config.TENANT,
-        config.CLIENT_ID,
-        REDIRECT_URI,
-        auth_state,
-        config.RESOURCE)
+def login():    
     resp = flask.Response(status=307)
-    resp.headers['location'] = authorization_url
+    flask.session["flow"] = _build_auth_code_flow(scopes=config.SCOPE)
+    resp.headers['location'] = flask.session["flow"]["auth_uri"]
     return resp
 
 
 @app.route("/getAToken")
-def main_logic():
-    code = flask.request.args['code']
-    state = flask.request.args['state']
-    if state != flask.session['state']:
-        raise ValueError("State does not match")
-    auth_context = adal.AuthenticationContext(AUTHORITY_URL)
-    token_response = auth_context.acquire_token_with_authorization_code(code, REDIRECT_URI, config.RESOURCE,
-                                                                        config.CLIENT_ID, config.CLIENT_SECRET)
-    # It is recommended to save this to a database when using a production app.
-    flask.session['access_token'] = token_response['accessToken']
+def main_logic():   
+        result = _build_msal_app().acquire_token_by_auth_code_flow(flask.session.get("flow", {}), flask.request.args)
+        
+        # It is recommended to save this to a database when using a production app.
+        flask.session['access_token'] = result['access_token']       
+    
+        return flask.redirect('/graphcall')
 
-    return flask.redirect('/graphcall')
+def _build_msal_app(cache=None, authority=None):
+    return msal.ConfidentialClientApplication(
+        config.CLIENT_ID, authority=authority or AUTHORITY_URL,
+        client_credential=config.CLIENT_SECRET, token_cache=cache)
 
+def _build_auth_code_flow(authority=None, scopes=None):
+    return _build_msal_app(authority=authority).initiate_auth_code_flow(
+        scopes or [],
+        REDIRECT_URI)
 
 @app.route('/graphcall')
 def graphcall():

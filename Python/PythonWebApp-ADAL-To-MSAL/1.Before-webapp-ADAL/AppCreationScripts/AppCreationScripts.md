@@ -1,4 +1,4 @@
-# Registering the sample apps with Microsoft Identity Platform and updating the configuration files using PowerShell scripts
+# Registering the Azure Active Directory applications and updating the configuration files for this sample using PowerShell scripts
 
 ## Overview
 
@@ -13,7 +13,7 @@
    ```PowerShell
    .\AppCreationScripts\Configure.ps1
    ```
-1. Open the Visual Studio solution and click start
+1. Open the solution and click start
 
 ### More details
 
@@ -37,7 +37,7 @@ These scripts are:
 
 - `Configure.ps1` which:
   - creates Azure AD applications and their related objects (permissions, dependencies, secrets),
-  - changes the configuration files in the C# and JavaScript projects.
+  - changes the configuration files in the python projects.
   - creates a summary file named `createdApps.html` in the folder from which you ran the script, and containing, for each Azure AD application it created:
     - the identifier of the application
     - the AppId of the application
@@ -60,7 +60,7 @@ The `Configure.ps1` will stop if it tries to create an Azure AD application whic
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
     ```
 ### (Optionally) install AzureAD PowerShell modules
-The scripts install the required PowerShell module (AzureAD) for the current user if needed. However, if you want to install if for all users on the machine, you can follow the following steps:
+The scripts install the required PowerShell module (AzureAD) for the current user if needed. However, if you want to install it for all users on the machine, you can follow the following steps:
 
 4. If you have never done it already, in the PowerShell window, install the AzureAD PowerShell modules. For this:
 
@@ -82,8 +82,7 @@ The scripts install the required PowerShell module (AzureAD) for the current use
     cd AppCreationScripts
     ```
 6. Run the scripts. See below for the [four options](#four-ways-to-run-the-script) to do that.
-7. Open the Visual Studio solution, and in the solution's context menu, choose **Set Startup Projects**.
-8. select **Start** for the projects
+7. Open the project and run it
 
 You're done. this just works!
 

@@ -79,6 +79,10 @@
     "TodoListBaseAddress": "https://localhost:44351" 
   }, 
   ```
+- Remove the below line of code to get rid of adal reference
+   ```sh
+   using Microsoft.IdentityModel.Clients.ActiveDirectory; 
+  ```
 - Declare the below variables in the TodoController class
   
   ```sh
@@ -207,10 +211,6 @@
                     }
   ```
  
-- Remove the below line of code to get rid of adal reference
-   ```sh
-   using Microsoft.IdentityModel.Clients.ActiveDirectory; 
-  ```
 - Specify the asp are path as MicrosoftIdentity under the views/shared folder in the file _LoginPartial,cshtml 
    
    Update asp-area value to **MicrosoftIdentity** instead of blank

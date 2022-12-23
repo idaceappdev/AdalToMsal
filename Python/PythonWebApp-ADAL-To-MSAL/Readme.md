@@ -1,1 +1,2 @@
 
+Explain project structure

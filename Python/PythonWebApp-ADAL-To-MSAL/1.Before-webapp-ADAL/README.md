@@ -214,6 +214,23 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
 1. From the *Branding* menu, update the **Home page URL**, to the address of your service, for example [https://PythonWebApp-contoso.azurewebsites.net](https://PythonWebApp-contoso.azurewebsites.net). Save the configuration.
 1. Add the same URL in the list of values of the *Authentication -> Redirect URIs* menu. If you have multiple redirect urls, make sure that there a new entry using the App service's Uri for each redirect url.
 
+### Verifying this app is using ADAL
+
+1. Notice the URL during the sign-in process which will be using the V1 endpoint.
+
+  ![image](https://user-images.githubusercontent.com/62542910/209290785-f66d9861-5a7c-4936-a9f3-426b73b1db62.png)
+    
+    https://login.microsoftonline.com/<Tenand-ID>/oauth2/authorize?response_type=code&client_id=<Client-Id>&redirect_uri=http%3a%2f%2flocalhost%3a5000%2fgetAToken&state=fcee4c8e-aba6-4c88-8ca9-b969eb0e0b7e&resource=https%3a%2f%2fgraph.microsoft.com&sso_nonce=AwABAAEAAAACAOz_BAD0_0_Ec_7cUglkfbpS23G8dDNUQe5tQqR3QW1AdzoQMwoEDySvrd2yM32pEjn59QDiRHuAZiShWmH-xRszQHK3gtsgAA&client-request-id=a6e58d17-c1a7-48c7-b4f0-3f6c5cd1a298&mscrid=a6e58d17-c1a7-48c7-b4f0-3f6c5cd1a298
+    
+  
+2. Go to Azure portal and observe the sign -in logs and click on the additional details tab and observe the ADAL information(under non-interactive logs)
+    
+    ![image](https://user-images.githubusercontent.com/62542910/209291043-55d1c6b9-f221-4524-8915-d3f8afb36883.png)
+
+3. If you have setup the workbook solution to track the ADAL apps as explained [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps) then you will see the entry as below  
+    
+    ![image](https://user-images.githubusercontent.com/62542910/209291197-00574230-3401-4b24-8e86-81a65f8d074f.png)
+
 
 ## Community Help and Support
 

@@ -220,7 +220,7 @@ options.ResponseType = "id_token code";
 
 Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overriding the response type (default *id_token*), the `OnTokenValidated` event is fired instead of `OnAuthorizationCodeReceived`. The line above requests **both** *id_token* and *code*, so that `OnTokenValidated` is called first. This ensures that `context.Principal` has a non-null value representing the signed-in user when `OnAuthorizeationCodeReceived` is called.
 
-### Verifying this app is using ADAL
+### Verifying this app is using ADAL (From Admin perspective)
 
 1. Notice the URL during the sign-in process which will be using the V1 endpoint.
 
@@ -235,6 +235,16 @@ Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overr
 3. If you have setup the workbook solution to track the ADAL apps as explained [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps) then you will see the entry as below  
     
     ![image](https://user-images.githubusercontent.com/62542910/206378709-e60e6704-aeb2-49df-bb7d-460112370264.png)
+
+### Verifying this app is using ADAL (From developer perspective)
+
+1. Search the entire project/solution to identify whether ADAL NUGET package is installed - The name of the package is `Microsoft.IdentityModel.Clients.ActiveDirectory`   
+2. Search the entire project/solution for the namespace `using Microsoft.IdentityModel.Clients.ActiveDirectory;`
+3. Search the entire project/solution for the class `AuthenticationContext`
+
+#### Quick Tips: 
+1. It is recomanded that, yiu unistall the ADAL NUGET package from the solution so that, Visual studio reports package missing errors for the code wherever ADAL namespace and AuntticationContext clasess are used. That makes it easier to review the ADAL related code. 
+2. If you do not find the ADAL references in the entire solution and still if your app is using ADAL calls, that means, you have a reference to a dependency which uses the ADAL. In that case, you will have to reach out to dependency owners to make the code changes. 
 
 
 ### How to change the app URL

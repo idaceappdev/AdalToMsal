@@ -214,7 +214,7 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
 1. From the *Branding* menu, update the **Home page URL**, to the address of your service, for example [https://PythonWebApp-contoso.azurewebsites.net](https://PythonWebApp-contoso.azurewebsites.net). Save the configuration.
 1. Add the same URL in the list of values of the *Authentication -> Redirect URIs* menu. If you have multiple redirect urls, make sure that there a new entry using the App service's Uri for each redirect url.
 
-### Verifying this app is using ADAL
+### Verifying this app is using ADAL (From admin perspective)
 
 1. Notice the URL during the sign-in process which will be using the V1 endpoint.
 
@@ -231,6 +231,12 @@ In the left-hand navigation pane, select the **Azure Active Directory** service,
     
     ![image](https://user-images.githubusercontent.com/62542910/209291197-00574230-3401-4b24-8e86-81a65f8d074f.png)
 
+
+### Verifying this app is using ADAL (From developer perspective)
+
+1. Search the entire project/solution to identify whether ADAL package is usedby searching for the line `import adal`
+2. Search the entire project/solution for the class `AuthenticationContext`
+3. Search for any of the ADAL API's used mentioned in the table https://learn.microsoft.com/en-us/azure/active-directory/develop/migrate-python-adal-msal#api-changes 
 
 ## Community Help and Support
 

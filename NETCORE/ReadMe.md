@@ -1,5 +1,5 @@
 # Brief about the sample project used. 
-Quick note on the sample project used here to demostrate the ADAL to MSAL migration. 
+Quick note on the sample project used here to demostrate the ADAL to MSAL migration. Walkthrough video is here https://youtu.be/3LZ6QVbiUug
 
 ## Scenario
 

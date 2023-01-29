@@ -1,10 +1,10 @@
-# Listing the ADAL apps in the tenant 
+# Listing the ADAL apps in your tenant 
 ## Method 1: 
-Please follow th work book solution as described in the link https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps
+Please follow the workbook solution as described in the following article: https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-get-list-of-all-active-directory-auth-library-apps
 
 ## Method 2: 
 
-For some reason, if you cannot run the workbook solution, you could also use the KQl queries. 
+For some reason, if you cannot run the workbook solution, you could also use the KQl queries added below. 
 
  ```sh
   let nonInteractive = AADNonInteractiveUserSignInLogs

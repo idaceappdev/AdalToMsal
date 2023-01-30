@@ -4,8 +4,8 @@
     // Enter Global Config Values & Instantiate ADAL AuthenticationContext
     window.config = {
         instance: 'https://login.microsoftonline.com/',
-        tenant: 'soumiorg.onmicrosoft.com',
-        clientId: '<Enter client-id or application-id>',
+        tenant: '<tenant>',
+        clientId: '<clientId>',
         postLogoutRedirectUri: window.location.origin,
         cacheLocation: 'localStorage' // enable this for IE, as sessionStorage does not work for localhost.
     };

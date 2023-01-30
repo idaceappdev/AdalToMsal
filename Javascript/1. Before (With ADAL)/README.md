@@ -71,7 +71,7 @@ Clean the solution, rebuild the solution, and run it.
 You can trigger the sign in experience by either clicking on the sign in link on the top right corner, or by clicking directly on the Todo List tab.
 Explore the sample by signing in, adding items to the To Do list, removing the user account, and starting again.
 
-- [Note]: The sample TodoList api uses localSQLDB to store the TodoList items. If the localSQLDB fails to work, we have provided the solution to store the TodoList items in the memory. Please follow the instructions below to setup the TodoList API sample to run using the memory.
+- **[Note]**: The [base sample](https://github.com/Azure-Samples/active-directory-javascript-singlepageapp-dotnet-webapi/tree/master) TodoList api uses localSQLDB to store the TodoList items. If you are using the base sample for migration and if the localSQLDB fails to work, we have provided the solution to store the TodoList items in the memory. Please follow the instructions below to setup the TodoList API sample to run using the memory.
 
 1. Locate `TodoListServiceContext.cs` file under the `DAL` folder and replace the TodoListServiceContext Class definition with:
 

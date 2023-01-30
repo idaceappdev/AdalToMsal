@@ -15,8 +15,8 @@
     // Enter MSAL Config values 
     window.config = {
         auth: {
-            clientId: '<Enter client-id or application-id>',
-            authority: "https://login.microsoftonline.com/<Enter the Tenant-id or Tenant-Name>",
+            clientId: 'clientId',
+            authority: "https://login.microsoftonline.com/<tenant>",
             redirectUri: window.location.origin,
             postLogoutRedirectUri: window.location.origin,
         },

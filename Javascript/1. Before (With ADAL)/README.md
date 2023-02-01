@@ -75,8 +75,8 @@ Explore the sample by signing in, adding items to the To Do list, removing the u
 
 1. Locate `TodoListServiceContext.cs` file under the `DAL` folder and replace the TodoListServiceContext Class definition with:
 
-```
-public class TodoListServiceContext
+   ```
+   public class TodoListServiceContext
     {
         public TodoListServiceContext()
 
@@ -88,44 +88,44 @@ public class TodoListServiceContext
 
         }
     }
-```
+   ```
 
 2. Locate the `TodoListServiceInitializer.cs` file under the `DAL` folder and comment the following section under the `TodoSPA.DAL` namespace.
 
-```
-class TodoListServiceInitializer : DropCreateDatabaseIfModelChanges<TodoListServiceContext>
-{}
-```
+   ```
+   class TodoListServiceInitializer : DropCreateDatabaseIfModelChanges<TodoListServiceContext>
+   {}
+   ```
 
 3. Locate the `TodoListController.cs` file under the `Controllers` folder and update the TodoListServiceContext object with `null`
 
-```
-private static TodoListServiceContext db = null;
-```
+   ```
+   private static TodoListServiceContext db = null;
+   ```
 
 4. Add the following constructor on the next line.
 
-```
-public TodoListController()
+   ```
+   public TodoListController()
     {
         if (db == null)
         db = new TodoListServiceContext();
     }
-```
+   ```
 
 5. Locate the Post method in the `TodoListController.cs` file and add the following snippet at before `db.Todoes.Add(todo);`
 
-```
-// Adding unique IDs to each item in the todo list
-            int newId = 0;
-            if (db.Todoes.Count() > 0)
-            {
-                newId = db.Todoes.Max(i => i.ID);
-            }
+   ```
+   // Adding unique IDs to each item in the todo list
+    int newId = 0;
+    if (db.Todoes.Count() > 0)
+    {
+        newId = db.Todoes.Max(i => i.ID);
+    }
 
-            todo.ID = newId + 1;
-            //----------------------------------
-```
+    todo.ID = newId + 1;
+    //----------------------------------
+   ```
 
 ## About the Code
 

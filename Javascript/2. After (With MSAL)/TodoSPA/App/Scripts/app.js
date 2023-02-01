@@ -4,7 +4,7 @@
     // Enter Global Config Values & Instantiate ADAL AuthenticationContext
     //window.config = {
     //    instance: 'https://login.microsoftonline.com/',
-    //    tenant: 'soumiorg.onmicrosoft.com',
+    //    tenant: '<tenant>',
     //    clientId: '<Enter client-id or application-id>',
     //    postLogoutRedirectUri: window.location.origin,
     //    cacheLocation: 'localStorage' // enable this for IE, as sessionStorage does not work for localhost.
@@ -59,7 +59,7 @@
     };
 
     var apiConfig = {
-        scopes: ["29551857-32aa-4fe8-8e49-abce8dc900a9/.default"]
+        scopes: ["<clientId>/.default"]
     }
 
     window.tokenRequest = {

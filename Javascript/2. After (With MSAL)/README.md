@@ -42,14 +42,14 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
 
     ```
     // Enter Global Config Values & Instantiate ADAL AuthenticationContext
-        //window.config = {
-        //    instance: 'https://login.microsoftonline.com/',
-        //    tenant: '<tenant>',
-        //    clientId: '<Enter client-id or application-id>',
-        //    postLogoutRedirectUri: window.location.origin,
-        //    cacheLocation: 'localStorage' // enable this for IE, as sessionStorage does not work for localhost.
-        //};
-        //var authContext = new AuthenticationContext(config);
+    window.config = {
+        instance: 'https://login.microsoftonline.com/',
+        tenant: '<tenant>',
+        clientId: '<Enter client-id or application-id>',
+        postLogoutRedirectUri: window.location.origin,
+        cacheLocation: 'localStorage' // enable this for IE, as sessionStorage does not work for localhost.
+    };
+    var authContext = new AuthenticationContext(config);
     ```
 
 2.  Add the following code, to specify the config for MSAL object. Makesure to update the `<clientId>` section (with the app-id of your API's App registration) available under **apiConfig** object.
@@ -125,26 +125,25 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
 
     ```
     // Check For & Handle Redirect From AAD After Login
-        //ADAL Code
-        var isCallback = authContext.isCallback(window.location.hash);
-        authContext.handleWindowCallback();
-        $errorMessage.html(authContext.getLoginError());
+    //ADAL Code
+    var isCallback = authContext.isCallback(window.location.hash);
+    authContext.handleWindowCallback();
+    $errorMessage.html(authContext.getLoginError());
 
-        if (isCallback && !authContext.getLoginError()) {
-            window.location = authContext._getItem(authContext.CONSTANTS.STORAGE.LOGIN_REQUEST);
-        }
+    if (isCallback && !authContext.getLoginError()) {
+        window.location = authContext._getItem(authContext.CONSTANTS.STORAGE.LOGIN_REQUEST);
+    }
     ```
 
 5.  Add the following code snippet to set the default UI.
 
     ```
     // When using MSAL
-
-        // Set the default UI
-        $userDisplay.empty();
-        $userDisplay.hide();
-        $signInButton.show();
-        $signOutButton.hide();
+    // Set the default UI
+    $userDisplay.empty();
+    $userDisplay.hide();
+    $signInButton.show();
+    $signOutButton.hide();
     ```
 
 6.  Add the promise handler for handling the response received from the redirect flow.
@@ -666,15 +665,3 @@ for (var property in user.idTokenClaims) {
            }
        });
    ```
-
-## About the Code
-
-The key files containing authentication logic are the following:
-
-**App.js** - Provides the app configuration values used by ADAL for driving protocol interactions with AAD, indicates which routes should not be accessed without previous authentication, issues login and logout requests to Azure AD, handles both successful and failed authentication callbacks from Azure AD, and displays information about the user received in the id_token.
-
-**index.html** - contains a reference to adal.js.
-
-**todoListCtrl.js**- shows how to take advantage of the acquireToken() method in ADAL to get a token for accessing a resource.
-
-**userDataCtrl.js** - shows how to extract user information from the cached id_token.

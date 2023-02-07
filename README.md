@@ -32,7 +32,7 @@ https://learn.microsoft.com/en-us/azure/active-directory/azuread-dev/azure-ad-en
 
 This collection of samples covers a number of scenarios demonstrating the step by step guidelines to follow when migrating an existing ADAL-based application over to MSAL with the least amount of changes. We have categorized the samples into different buckets based on the underlying platform and language used. Each of those buckets will further contain a "Before migration" sample which shows the application using ADAL library, and an "After migration" sample which shows the code changes needed to upgrade the same sample to MSAL. 
 
-It also includes a separate section ("IdentifyingADALApps") that can help tenant admins identify ADAL apps in a tenant using our workbooks solution and/or KQL queries.
+It also includes a separate section ("IdentifyingADALApps") that can help tenant admins identify ADAL apps in a tenant using our workbooks solution, KQL queries, or by running a PowerShell script.
 
 ## Migration help
 

@@ -114,7 +114,7 @@ if(Test-Path $ApplicationIDcsv)
 
     $data | Export-Csv -Path $exportPath -NoTypeInformation -Append -NoClobber
 
-    Write-Host "Source file: " $appIDcsv
+    Write-Host "Source file: " $ApplicationIDcsv
     Write-Host "Results file: " $exportPath
     Write-Host "Processed: " $apps.Count
 }

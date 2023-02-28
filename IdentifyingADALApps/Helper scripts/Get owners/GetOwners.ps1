@@ -86,8 +86,6 @@ if(Test-Path $ApplicationIDcsv)
     #We create the unique export file path
     $exportPath = $ApplicationIDcsv.Replace(".csv","-Export-" + (Get-Date -Format "yyMMddHHmmss") + ".csv")
 
-    #$apps = Get-MgApplication
-
     $data = @()
     $progress = 0
 

@@ -41,7 +41,7 @@ From your shell or command line:
 5. When the Register an application page appears, enter your application's registration information:
    - Enter a friendly name for the application, for example 'SinglePageApp-jQuery-DotNet'.
    - Leave **Supported account types** on **Accounts in this organizational directory only**
-   - For the **Redirect URI (optional)**, enter the base URL for the sample, which is by default `https://localhost:44302/`.
+   - For the **Redirect URI (optional)**, select the platform as "_Single-page application_" and enter the base URL for the sample, which is by default `https://localhost:44302/`.
 6. Click on **Register** to create the application.
 7. On the following app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the Visual Studio configuration file for this project.
 8. Select **Expose an API**, and select _Set_ For the App ID URI. When prompted, enter `https://<your_tenant_name>/SinglePageApp-jQuery-DotNet`, replacing `<your_tenant_name>` with the name of your Azure AD tenant.

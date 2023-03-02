@@ -29,10 +29,14 @@ Make sure you follow the steps mentioned in the `Before (With ADAL)` directory f
 
 Locate the `index.html` page and then add the following script tag above the following line `<script src="App/Scripts/app.js"></script>` to include the minified version of MSAL-Browser to your existing project.
 
-    ```
     <!--Adding MSAL-Browser CDN-->
         <script type="text/javascript" src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
-    ```
+
+Comment the script tag that adds the ADAL dependency to your index.html to make sure ADAL is no more used by your Single-page application.
+
+```
+<!-- <script src="App/Scripts/adal.js"></script> -->
+```
 
 ### Step 3: Update the app.js file to include MSAL.
 
@@ -52,7 +56,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
     var authContext = new AuthenticationContext(config);
     ```
 
-2.  Add the following code, to specify the config for MSAL object. Makesure to update the `<clientId>` section (with the app-id of your API's App registration) available under **apiConfig** object.
+    and then add the following code, to specify the config for MSAL object. Makesure to update the `<clientId>` section (with the app-id of your API's App registration) available under **apiConfig** object.
 
     ```
     // MSAL Code
@@ -111,7 +115,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
         };
     ```
 
-3.  Create the MSAL PublicClientApplication Object and Instantiate it and add the userAccount variable.
+2.  Create the MSAL PublicClientApplication Object and Instantiate it and add the userAccount variable.
 
     ```
     /*Instantiate MSAL PublicClientApplication Object*/
@@ -121,7 +125,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
     var userAccount = '';
     ```
 
-4.  Check for the following code snippet and comment it out.
+3.  Check for the following code snippet and comment it out.
 
     ```
     // Check For & Handle Redirect From AAD After Login
@@ -135,7 +139,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
     }
     ```
 
-5.  Add the following code snippet to set the default UI.
+4.  Add the following code snippet to set the default UI.
 
     ```
     // When using MSAL
@@ -146,7 +150,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
     $signOutButton.hide();
     ```
 
-6.  Add the promise handler for handling the response received from the redirect flow.
+5.  Add the promise handler for handling the response received from the redirect flow.
 
     ```
     /**
@@ -161,7 +165,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
         });
     ```
 
-7.  Located and comment out the following section:
+6.  Located and comment out the following section:
 
     ```
     // Check Login Status, Update UI
@@ -214,7 +218,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
         }
     ```
 
-8.  Update the signInButton and signOutButton code with the respective code snippets.
+7.  Update the signInButton and signOutButton code with the respective code snippets.
     **SignIn:**
 
     ```
@@ -243,7 +247,7 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
     });
     ```
 
-9.  Locate the LoadView(view) method and comment the following section of the code.
+8.  Locate the LoadView(view) method and comment the following section of the code.
 
     ```
     // Check if View Requires Authentication
@@ -275,14 +279,14 @@ Locate the app.js file present under `App\Scripts\` and update the follow the st
 var authContext = new AuthenticationContext(config);
 ```
 
-2. Instantiate MSAL PublicClientApplication Object.
+and then instantiate MSAL PublicClientApplication Object.
 
 ```
 /*Instantiate MSAL PublicClientApplication Object*/
 var msalInstance = new msal.PublicClientApplication(config);
 ```
 
-3. Locate the following ADAL code inside `refreshDataView()` method and comment it.
+2. Locate the following ADAL code inside `refreshDataView()` method and comment it.
 
 ```
 // ADAL Code
@@ -296,7 +300,7 @@ for (var property in user.profile) {
 }
 ```
 
-4. Since MSAL doesnt not support the `user.profile` property instead, it profiles `user.idTokenClaims` that can be used to fetch the user properties. Add the following code snippet to list the user properties.
+and since MSAL doesn't not support the `user.profile` property instead, it profiles `user.idTokenClaims` that can be used to fetch the user properties. Add the following code snippet to list the user properties.
 
 ```
 // MSAL Code
@@ -458,7 +462,7 @@ for (var property in user.idTokenClaims) {
    });
    ```
 
-   then add the following MSAL code snippet to make the **DELETE** endpoint to work..
+   then add the following MSAL code snippet to make the **DELETE** endpoint to work.
 
    ```
    //MSAL Code
@@ -500,7 +504,7 @@ for (var property in user.idTokenClaims) {
        });
    ```
 
-4. Locate the following ADAL code for the **PUT** endpoint (To edit TodoList items) inside `registerDataClickHandlers()` method and comment it.
+   Post that locate the following ADAL code for the **PUT** endpoint (To edit TodoList items) inside `registerDataClickHandlers()` method and comment it.
 
    ```
    // Acquire Token for Backend
@@ -583,7 +587,7 @@ for (var property in user.idTokenClaims) {
        });
    ```
 
-5. Locate the following ADAL code inside `registerViewClickHandlers()` method and comment it,
+4. Locate the following ADAL code inside `registerViewClickHandlers()` method and comment it,
 
    ```
    // Acquire Token for Backend

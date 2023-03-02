@@ -1,4 +1,4 @@
-# Migration steps to be followed to migrate to MSAL python and from ADAL in flask web app
+# Migration steps to be followed to migrate to MSAL python from ADAL in a flask web app
 
 ## Changes needed in config.py file
 
@@ -9,24 +9,24 @@
    ```
 ## Changes needed in app.py file
 
-- Remove the below line of code to get rid of adal refernce
+- Remove the below line of code to get rid of adal reference
    
    ```sh
     import adal
    ```
-  Replace it with MSAL package refernce 
+  Replace it with MSAL package reference 
    
    ```sh
     import msal
    ```
-- Remove the below line of code which is no longer needed as MSAL provides this abstration.
+- Remove the below line of code which is no longer needed as MSAL provides this abstraction.
    
    ```sh
     TEMPLATE_AUTHZ_URL = ('https://login.microsoftonline.com/{}/oauth2/v2.0/authorize?' +
                       'response_type=code&client_id={}&redirect_uri={}&' +
                       'state={}&scope={}/{}')
    ```
- - Define the below two methods which initilizes the MSAL object.
+ - Define the below two methods which initializes the MSAL object.
    
    ```sh
     def _build_msal_app(cache=None, authority=None):
@@ -78,7 +78,7 @@
         flask.session['access_token'] = result['access_token']       
 
    ```
-## Steps to verify that app is using MSAL.
+## Steps to verify that app is using MSAL
 
 - Observe the URL during sign-in which should redirect to v2 endpoint 
   

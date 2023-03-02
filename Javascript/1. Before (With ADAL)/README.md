@@ -41,7 +41,7 @@ From your shell or command line:
 5. When the Register an application page appears, enter your application's registration information:
    - Enter a friendly name for the application, for example 'SinglePageApp-jQuery-DotNet'.
    - Leave **Supported account types** on **Accounts in this organizational directory only**
-   - For the **Redirect URI (optional)**, enter the base URL for the sample, which is by default `https://localhost:44302/`.
+   - For the **Redirect URI (optional)**, select the platform as "_Single-page application_" and enter the base URL for the sample, which is by default `https://localhost:44302/`.
 6. Click on **Register** to create the application.
 7. On the following app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the Visual Studio configuration file for this project.
 8. Select **Expose an API**, and select _Set_ For the App ID URI. When prompted, enter `https://<your_tenant_name>/SinglePageApp-jQuery-DotNet`, replacing `<your_tenant_name>` with the name of your Azure AD tenant.
@@ -75,8 +75,8 @@ Explore the sample by signing in, adding items to the To Do list, removing the u
 
 1. Locate `TodoListServiceContext.cs` file under the `DAL` folder and replace the TodoListServiceContext Class definition with:
 
-```
-public class TodoListServiceContext
+   ```
+   public class TodoListServiceContext
     {
         public TodoListServiceContext()
 
@@ -88,44 +88,44 @@ public class TodoListServiceContext
 
         }
     }
-```
+   ```
 
 2. Locate the `TodoListServiceInitializer.cs` file under the `DAL` folder and comment the following section under the `TodoSPA.DAL` namespace.
 
-```
-class TodoListServiceInitializer : DropCreateDatabaseIfModelChanges<TodoListServiceContext>
-{}
-```
+   ```
+   class TodoListServiceInitializer : DropCreateDatabaseIfModelChanges<TodoListServiceContext>
+   {}
+   ```
 
 3. Locate the `TodoListController.cs` file under the `Controllers` folder and update the TodoListServiceContext object with `null`
 
-```
-private static TodoListServiceContext db = null;
-```
+   ```
+   private static TodoListServiceContext db = null;
+   ```
 
 4. Add the following constructor on the next line.
 
-```
-public TodoListController()
+   ```
+   public TodoListController()
     {
         if (db == null)
         db = new TodoListServiceContext();
     }
-```
+   ```
 
 5. Locate the Post method in the `TodoListController.cs` file and add the following snippet at before `db.Todoes.Add(todo);`
 
-```
-// Adding unique IDs to each item in the todo list
-            int newId = 0;
-            if (db.Todoes.Count() > 0)
-            {
-                newId = db.Todoes.Max(i => i.ID);
-            }
+   ```
+   // Adding unique IDs to each item in the todo list
+    int newId = 0;
+    if (db.Todoes.Count() > 0)
+    {
+        newId = db.Todoes.Max(i => i.ID);
+    }
 
-            todo.ID = newId + 1;
-            //----------------------------------
-```
+    todo.ID = newId + 1;
+    //----------------------------------
+   ```
 
 ## About the Code
 

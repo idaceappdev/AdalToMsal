@@ -164,22 +164,22 @@ As a first step you'll need to:
 
 In the steps below, "ClientID" is the same as "Application ID" or "AppId".
 
-Open the solution in Visual Studio to configure the projects
+Open the solution in Visual Studio to configure the projects.
 
 #### Configure the service project
 
-> Note: if you used the setup scripts, the changes below will have been applied for you
+> Note: if you used the setup scripts, the changes below would have been applied for you.
 
-1. Open the `TodoListService\appsettings.json` file
+1. Open the `TodoListService\appsettings.json` file.
 1. Find the app key `Domain` and replace the existing value with your Azure AD tenant name.
 1. Find the app key `TenantId` and replace the existing value with your Azure AD tenant ID.
 1. Find the app key `ClientId` and replace the existing value with the application ID (clientId) of the `TodoListService-aspnetcore` application copied from the Azure portal.
 
 #### Configure the client project
 
-> Note: if you used the setup scripts, the changes below will have been applied for you
+> Note: if you used the setup scripts, the changes below would have been applied for you.
 
-1. Open the `TodoListWebApp\appsettings.json` file
+1. Open the `TodoListWebApp\appsettings.json` file.
 1. Find the app key `Domain` and replace the existing value with your Azure AD tenant name.
 1. Find the app key `TenantId` and replace the existing value with your Azure AD tenant ID.
 1. Find the app key `ClientId` and replace the existing value with the application ID (clientId) of the `TodoListWebApp-aspnetcore` application copied from the Azure portal.
@@ -192,7 +192,7 @@ In the solution properties, set both projects as startup projects. Set **TodoLis
 
 On startup, the web API displays an empty web page. This is expected behavior.
 
-Explore the sample by signing in into the web app, clicking on "Todo List", signing again if needed, adding items to the To Do list, signing-out, and starting again.  Since the authenticated session is stored in a cookie, the application doesn't require logging in again if the previous session was never signed out.
+Explore the sample by signing in into the web app, clicking on "Todo List", signing in again if needed, adding items to the To Do list, signing-out, and starting again. Since the authenticated session is stored in a cookie, the application doesn't require logging in again if the previous session was never signed out.
 
 > [!NOTE]
 > The To Do list is stored in memory in this sample. Each time the TodoListService API is stopped, any to-do lists are reset.
@@ -207,10 +207,10 @@ The code for the ASP.NET web app is based on the code of the [active-directory-d
 Then, based on that code, the following modifications were applied. [This commit](https://github.com/Azure-Samples/active-directory-dotnet-webapp-webapi-openidconnect-aspnetcore/pull/24/commits/2ce2750dfd172f9297c2d1885cccdd6b66cc7529) details the incremental changes described below:
 - Update of the AzureAdOptions class to add a property to compute the `Authority` from the `instance` and the `tenantID`, and adding two other configuration options for `ClientSecret`,  the `resourceId` of TodoListService (its clientId) and the base address for this service.
 - Added a `TodoListItem` in models to deserialize the Json sent by the TodoListService
-- Added a `NaiveSessionCache` class in a new Utils folder which serves as a token cache which livetime is the duration of the session. Updated the `Startup.cs` file accordingly to add sessions.
-- Added a `TodoListController` and a `Todo` view, as well as a "Todo List" entry in the toolbar of the Web API. This is where most of the interesting code is
-- Updated the `SignOut()` method of the `AccountController` to clear the cache for the user when s/he signs-out.
-- Updated `AzureAdAuthenticationBuilderExtensions.cs` to request an authorization code, and redeem it, getting an access token to the Azure AD graph (`https://graph.windows.com`), so that the token cache contains a token for the user. This token will be used by the `TodoController` to request another token for the TodoListService
+- Added a `NaiveSessionCache` class in a new Utils folder which serves as a token cache whose lifetime is the duration of the session. Updated the `Startup.cs` file accordingly to add sessions.
+- Added a `TodoListController` and a `Todo` view, as well as a "Todo List" entry in the toolbar of the Web API. This is where most of the interesting code is.
+- Updated the `SignOut()` method of the `AccountController` to clear the cache for the user when he/she signs-out.
+- Updated `AzureAdAuthenticationBuilderExtensions.cs` to request an authorization code, redeem it, and get an access token to Azure AD graph (`https://graph.windows.com`), so that the token cache contains a token for the user. This token will be used by the `TodoController` to request another token for the TodoListService.
 
 This scenario is slightly different than the same scenario in ASP.NET (not Core).  Note the following line in *AzureAdAuthenticationBuilderExtensions.cs*:
 
@@ -243,12 +243,13 @@ Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overr
 3. Search the entire project/solution for the class `AuthenticationContext`
 
 #### Quick Tips: 
-1. It is recommended that, you unistall the ADAL NUGET package from the solution so that, Visual studio reports package missing errors for the code wherever ADAL namespace and AuthenticationContext classes are used. That makes it easier to review the ADAL related code. 
+
+1. It is recommended that you uninstall the ADAL NUGET package from the solution so that, Visual studio reports package missing errors for the code wherever ADAL namespace and AunthentionContext clasess are used. That makes it easier to review the ADAL related code. 
 2. If you do not find the ADAL references in the entire solution and still if your app is using ADAL calls, that means, you have a reference to a dependency which uses the ADAL. In that case, you will have to reach out to dependency owners to make the code changes. 
 
 
 ### How to change the app URL
-If you are using Visual Studio 2017
+If you are using Visual Studio 2017,
 1. Edit the TodoListService's properties (right click on `TodoListService.csproj`, and choose **Properties**)
 1. In the Debug tab:
     1. Check the **Launch browser** field to `https://localhost:44351/api/todolist`
@@ -261,9 +262,9 @@ The same kind of modifications can be made on the `TodoListWebApp.csproj` projec
 > Ensure that all of the app registration steps reflect any changes made to the URLs, or the sample won't function.
 
 ### What to change when you deploy the sample to Azure
-To this sample to Azure:
+To deploy this sample to Azure:
 - Update the various URLs (reply URLs, Base URL) in the *appsettings.json* files
-- Add Reply URLs pointing to the deployed location, for  both applications in the Azure portal
+- Add Reply URLs pointing to the deployed location, for both applications in the Azure portal
 
 ### Azure Government Deviations
 
@@ -280,4 +281,4 @@ Once those changes have been accounted for, you should be able to run this sampl
 
 ## Related content
 ### Other documentation / samples
-The scenarios involving Azure Active directory with ASP.NET Core are described in ASP.Net Core | Security | Authentication | [Azure Active Directory](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/azure-active-directory/). From this page, you can access the related samples
+The scenarios involving Azure Active directory with ASP.NET Core are described in ASP.Net Core | Security | Authentication | [Azure Active Directory](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/azure-active-directory/). From this page, you can access the related samples.

@@ -1,4 +1,4 @@
-# Migration steps to be followed to migrate to MSAL python and from ADAL in flsk web app
+# Migration steps to be followed to migrate to MSAL python and from ADAL in flask web app
 
 ## Changes needed in config.py file
 
@@ -19,14 +19,14 @@
    ```sh
     import msal
    ```
-- Remove the below line of code which is no longer needed MSAL provides this abstration.
+- Remove the below line of code which is no longer needed as MSAL provides this abstration.
    
    ```sh
     TEMPLATE_AUTHZ_URL = ('https://login.microsoftonline.com/{}/oauth2/v2.0/authorize?' +
                       'response_type=code&client_id={}&redirect_uri={}&' +
                       'state={}&scope={}/{}')
    ```
- - Define the below two methods which initilizes the msal object.
+ - Define the below two methods which initilizes the MSAL object.
    
    ```sh
     def _build_msal_app(cache=None, authority=None):
@@ -86,6 +86,6 @@
    https://login.microsoftonline.com/<Tenant-Id>/oauth2/v2.0/authorize?client_id=<Client-Id>&redirect_uri=https%3a%2f%2flocalhost%3a44377%2fsignin-oidc&response_type=code&scope=openid+profile+offline_access+api%3 
    ```
  
-- Go to the sign-in logs under non-interactive section and observe that, now we are reporting the MSAL version instead of ADAL, This confirms successful migration. Please do note that, interactive log may report blank It is the access token request which is implemented by the MSAL python
+- Go to the sign-in logs under non-interactive section and observe that, now we are reporting the MSAL version instead of ADAL. This confirms successful migration. Please do note that, interactive log may report blank. It is the access token request which is implemented by the MSAL python.
 
   ![image](https://user-images.githubusercontent.com/62542910/209336559-5fdfc971-9445-4671-a8ec-4fb81b3d2f0d.png)

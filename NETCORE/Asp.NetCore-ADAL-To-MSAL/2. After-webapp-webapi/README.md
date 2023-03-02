@@ -4,7 +4,7 @@ This project is built on top of the previous one.
 
 ## About this scenario
 We are aiming to update the ASP.NET Core 2.0 application to use Identity.Web (MSAL) without updating the .NET Core version.
-This is aimed for scenarios where the developers are unable to update the .NET Core version at this moment, but the imediate goal is to migrate away from ADAL.
+This is aimed for scenarios where the developers are unable to update the .NET Core version at this moment, but the immediate goal is to migrate away from ADAL.
 All changes will happen on the web application, as this one does the access token acquisition for the API.
 
 ## Changes needed in ***TodoListWebApp*** project

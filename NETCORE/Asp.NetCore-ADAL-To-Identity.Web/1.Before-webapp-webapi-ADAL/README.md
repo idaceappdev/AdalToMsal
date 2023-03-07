@@ -243,6 +243,7 @@ Unlike ASP.NET, ASP.NET Core 2.0 uses an implicit flow by default. Without overr
 3. Search the entire project/solution for the class `AuthenticationContext`
 
 #### Quick Tips: 
+
 1. It is recommended that you uninstall the ADAL NUGET package from the solution so that, Visual studio reports package missing errors for the code wherever ADAL namespace and AunthentionContext clasess are used. That makes it easier to review the ADAL related code. 
 2. If you do not find the ADAL references in the entire solution and still if your app is using ADAL calls, that means, you have a reference to a dependency which uses the ADAL. In that case, you will have to reach out to dependency owners to make the code changes. 
 

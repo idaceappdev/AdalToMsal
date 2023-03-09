@@ -57,8 +57,6 @@ function getAppInformation()
             $d.ServicePrincipalDescription = " | " + $sp.Notes
         }
 
-        
-
         $spOwners = Get-MgServicePrincipalOwner -ServicePrincipalId $sp.Id
         foreach($spOwner in $spOwners)
         {
@@ -89,7 +87,7 @@ if(Test-Path $ApplicationIDcsv)
     $data = @()
     $progress = 0
 
-    Connect-MgGraph
+    Connect-MgGraph -scopes "Directory.Read.All"
 
     foreach($app in $apps)
     {
